@@ -1,0 +1,852 @@
+/* ============================================================
+   main.css
+   global styles matching the Figma design
+   dark theme with purple sidebar and green accents
+   ============================================================ */
+
+/* google font import */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+/* ============================================================
+   CSS VARIABLES
+   all colors defined here
+   change here and it updates everywhere
+   ============================================================ */
+:root {
+    --bg-dark:          #0d0d0d;
+    --bg-card:          #1a1a1a;
+    --bg-sidebar:       #c8c8e8;
+    --bg-header:        #e8ede8;
+    --bg-input:         #f5f0e8;
+    --bg-room-card:     #e8f0e8;
+
+    --color-primary:    #6b5ce7;
+    --color-green:      #4caf7d;
+    --color-green-btn:  #2d5a3d;
+    --color-text-dark:  #1a1a1a;
+    --color-text-light: #ffffff;
+    --color-text-muted: #666666;
+    --color-approved:   #4caf7d;
+    --color-pending:    #ff9800;
+    --color-rejected:   #f44336;
+    --color-border:     #e0e0e0;
+
+    --font-main:        'DM Sans', sans-serif;
+    --radius-sm:        6px;
+    --radius-md:        12px;
+    --radius-lg:        16px;
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-dark);
+    color: var(--color-text-dark);
+    min-height: 100vh;
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar {
+    width: 250px;
+    background-color: var(--bg-sidebar);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+}
+
+.sidebar_logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px 30px 20px;
+}
+
+.sidebar_logo_icon {
+    width: 36px;
+    height: 36px;
+    background-color: var(--color-primary);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.sidebar_logo_text {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-text-dark);
+}
+
+.sidebar_badge {
+    background-color: var(--color-primary);
+    color: white;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.sidebar_label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    padding: 0 20px 10px 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sidebar_nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 12px;
+    flex: 1;
+}
+
+.sidebar_item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.sidebar_item:hover {
+    background-color: rgba(107, 92, 231, 0.1);
+    color: var(--color-primary);
+}
+
+.sidebar_item.active {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.sidebar_item_icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar_user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--color-border);
+    margin-top: auto;
+}
+
+.sidebar_user_avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.sidebar_user_info {
+    flex: 1;
+}
+
+.sidebar_user_name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-dark);
+}
+
+.sidebar_user_email {
+    font-size: 11px;
+    color: var(--color-text-muted);
+}
+
+.sidebar_logout_btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    font-size: 16px;
+    padding: 4px;
+}
+
+/* ============================================================
+   MAIN CONTENT AREA
+   ============================================================ */
+.main_content {
+    margin-left: 250px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ============================================================
+   TOP NAVBAR
+   ============================================================ */
+.top_navbar {
+    background-color: var(--bg-header);
+    padding: 12px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.top_navbar_breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--color-text-muted);
+}
+
+.top_navbar_breadcrumb_current {
+    color: var(--color-text-dark);
+    font-weight: 500;
+}
+
+.top_navbar_right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.live_badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-green);
+}
+
+.live_dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+}
+
+.notification_btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--color-text-muted);
+}
+
+.user_chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--color-primary);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.user_chip_avatar {
+    width: 24px;
+    height: 24px;
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* ============================================================
+   PAGE CONTENT
+   ============================================================ */
+.page_content {
+    background-color: var(--bg-dark);
+    flex: 1;
+    padding: 30px;
+}
+
+.page_header {
+    margin-bottom: 24px;
+}
+
+.page_title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--color-green);
+    margin-bottom: 4px;
+}
+
+.page_subtitle {
+    font-size: 14px;
+    color: var(--color-text-muted);
+}
+
+/* ============================================================
+   SEARCH FILTER BAR
+   ============================================================ */
+.filter_bar {
+    background-color: var(--bg-input);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.filter_group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 160px;
+}
+
+.filter_label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.filter_input,
+.filter_select {
+    background-color: white;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 14px;
+    font-family: var(--font-main);
+    color: var(--color-text-dark);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.filter_input:focus,
+.filter_select:focus {
+    border-color: var(--color-primary);
+}
+
+.search_btn {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 11px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--font-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+}
+
+.search_btn:hover {
+    opacity: 0.9;
+}
+
+/* ============================================================
+   RESULTS COUNT
+   ============================================================ */
+.results_count {
+    font-size: 14px;
+    color: var(--color-green);
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+/* ============================================================
+   ROOM CARDS GRID
+   ============================================================ */
+.rooms_grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.room_card {
+    background-color: var(--bg-room-card);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    border: 1px solid rgba(76, 175, 125, 0.2);
+}
+
+.room_card_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.room_card_title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.room_number {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-text-dark);
+}
+
+.room_type_badge {
+    background-color: var(--color-primary);
+    color: white;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.available_badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-green);
+}
+
+.available_dot {
+    width: 7px;
+    height: 7px;
+    background-color: var(--color-green);
+    border-radius: 50%;
+}
+
+.room_location {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.room_capacity {
+    background-color: rgba(76, 175, 125, 0.15);
+    border-radius: var(--radius-sm);
+    padding: 8px 14px;
+    font-size: 13px;
+    color: var(--color-text-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.book_btn {
+    width: 100%;
+    background-color: rgba(76, 175, 125, 0.2);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--font-main);
+    color: var(--color-text-dark);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.book_btn:hover {
+    background-color: rgba(76, 175, 125, 0.35);
+}
+
+/* ============================================================
+   BOOKING MODAL
+   ============================================================ */
+.modal_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background-color: var(--bg-input);
+    border-radius: var(--radius-lg);
+    padding: 30px;
+    width: 420px;
+    max-width: 90%;
+}
+
+.modal_title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    margin-bottom: 6px;
+}
+
+.modal_subtitle {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin-bottom: 20px;
+}
+
+.modal_field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.modal_label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+.modal_select,
+.modal_input {
+    background-color: white;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 14px;
+    font-family: var(--font-main);
+    color: var(--color-text-dark);
+    outline: none;
+}
+
+.modal_select:focus,
+.modal_input:focus {
+    border-color: var(--color-primary);
+}
+
+.modal_actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.modal_cancel_btn {
+    flex: 1;
+    background-color: white;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 11px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--font-main);
+    cursor: pointer;
+    color: var(--color-text-dark);
+}
+
+.modal_confirm_btn {
+    flex: 1;
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 11px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--font-main);
+    cursor: pointer;
+    color: white;
+    transition: opacity 0.2s;
+}
+
+.modal_confirm_btn:hover {
+    opacity: 0.9;
+}
+
+/* ============================================================
+   MY BOOKINGS PAGE
+   ============================================================ */
+.stats_row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat_card {
+    background-color: var(--bg-input);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.stat_icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.stat_icon.approved {
+    background-color: rgba(76, 175, 125, 0.2);
+}
+
+.stat_icon.pending {
+    background-color: rgba(255, 152, 0, 0.2);
+}
+
+.stat_icon.rejected {
+    background-color: rgba(244, 67, 54, 0.2);
+}
+
+.stat_number {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    line-height: 1;
+}
+
+.stat_label {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+}
+
+/* ============================================================
+   BOOKINGS TABLE
+   ============================================================ */
+.bookings_table_wrapper {
+    background-color: var(--bg-room-card);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+}
+
+.bookings_table_title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    margin-bottom: 16px;
+}
+
+.bookings_table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.bookings_table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.bookings_table td {
+    padding: 14px 12px;
+    font-size: 14px;
+    color: var(--color-text-dark);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    vertical-align: top;
+}
+
+.bookings_table tr:last-child td {
+    border-bottom: none;
+}
+
+.room_cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.room_icon {
+    color: var(--color-primary);
+    font-size: 14px;
+}
+
+.date_cell {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.date_line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+}
+
+.date_line_icon {
+    color: var(--color-text-muted);
+    font-size: 12px;
+}
+
+/* ============================================================
+   STATUS BADGES
+   ============================================================ */
+.status_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status_badge.approved {
+    background-color: rgba(76, 175, 125, 0.15);
+    color: var(--color-approved);
+}
+
+.status_badge.pending {
+    background-color: rgba(255, 152, 0, 0.15);
+    color: var(--color-pending);
+}
+
+.status_badge.cancelled,
+.status_badge.rejected {
+    background-color: rgba(244, 67, 54, 0.15);
+    color: var(--color-rejected);
+}
+
+.status_dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+}
+
+/* ============================================================
+   CANCEL BUTTON IN TABLE
+   ============================================================ */
+.cancel_btn {
+    background: none;
+    border: 1px solid var(--color-rejected);
+    color: var(--color-rejected);
+    border-radius: var(--radius-sm);
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font-main);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cancel_btn:hover {
+    background-color: var(--color-rejected);
+    color: white;
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty_state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--color-text-muted);
+}
+
+.empty_state_icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.empty_state_text {
+    font-size: 15px;
+}
+
+/* ============================================================
+   MESSAGE
+   ============================================================ */
+.message {
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+.message.success {
+    background-color: rgba(76, 175, 125, 0.15);
+    color: var(--color-approved);
+    border: 1px solid rgba(76, 175, 125, 0.3);
+}
+
+.message.error {
+    background-color: rgba(244, 67, 54, 0.15);
+    color: var(--color-rejected);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+/* ============================================================
+   LOADING
+   ============================================================ */
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--color-text-muted);
+    font-size: 14px;
+}
