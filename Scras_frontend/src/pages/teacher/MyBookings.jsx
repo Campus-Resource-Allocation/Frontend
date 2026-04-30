@@ -54,8 +54,8 @@ export default function MyBookings({ onPageChange }) {
 
     const formatDate = (dateStr) => {
         if (!dateStr) return "";
-        return new Date(dateStr).toLocaleDateString("en-US", {
-            weekday: 'short', month: "short", day: "numeric", year: "numeric"
+        return new Date(dateStr).toLocaleDateString("en-US", { 
+            weekday: 'short', month: "short", day: "numeric", year: "numeric" 
         });
     };
 
@@ -72,16 +72,16 @@ export default function MyBookings({ onPageChange }) {
                     <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b', marginBottom: '8px' }}>My Bookings</h1>
                     <p style={{ color: '#64748b', fontSize: '14px' }}>Track and manage your room reservation requests</p>
                 </div>
-                <button
+                <button 
                     onClick={() => onPageChange('room-finder')}
-                    style={{
-                        background: '#7c3aed',
-                        color: 'white',
-                        padding: '12px 24px',
-                        borderRadius: '12px',
-                        border: 'none',
-                        fontWeight: '700',
-                        fontSize: '14px',
+                    style={{ 
+                        background: '#7c3aed', 
+                        color: 'white', 
+                        padding: '12px 24px', 
+                        borderRadius: '12px', 
+                        border: 'none', 
+                        fontWeight: '700', 
+                        fontSize: '14px', 
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
@@ -97,11 +97,11 @@ export default function MyBookings({ onPageChange }) {
             </div>
 
             {message.text && (
-                <div style={{
-                    padding: "14px 20px", borderRadius: "12px", marginBottom: "24px",
-                    background: message.type === "success" ? "#f0fdf4" : "#fef2f2",
-                    border: `1px solid ${message.type === "success" ? "#dcfce7" : "#fecaca"}`,
-                    color: message.type === "success" ? "#15803d" : "#b91c1c",
+                <div style={{ 
+                    padding: "14px 20px", borderRadius: "12px", marginBottom: "24px", 
+                    background: message.type === "success" ? "#f0fdf4" : "#fef2f2", 
+                    border: `1px solid ${message.type === "success" ? "#dcfce7" : "#fecaca"}`, 
+                    color: message.type === "success" ? "#15803d" : "#b91c1c", 
                     fontSize: "14px", fontWeight: 600
                 }}>
                     {message.text}
@@ -115,14 +115,14 @@ export default function MyBookings({ onPageChange }) {
                     { label: "Pending Review", value: counts.pending, ...statusConfig.Pending },
                     { label: "Cancelled", value: counts.cancelled, ...statusConfig.Cancelled },
                 ].map((s) => (
-                    <div key={s.label} style={{
-                        background: "white", border: "1px solid #e2e8f0", borderRadius: "20px",
+                    <div key={s.label} style={{ 
+                        background: "white", border: "1px solid #e2e8f0", borderRadius: "20px", 
                         padding: "24px", display: "flex", alignItems: "center", gap: "20px",
                         boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
                     }}>
-                        <div style={{
-                            width: "48px", height: "48px", borderRadius: "14px",
-                            background: s.bg, display: "flex", alignItems: "center",
+                        <div style={{ 
+                            width: "48px", height: "48px", borderRadius: "14px", 
+                            background: s.bg, display: "flex", alignItems: "center", 
                             justifyContent: "center", fontSize: "20px", color: s.color,
                             border: `1px solid ${s.dot}20`
                         }}>{s.icon}</div>
@@ -179,10 +179,10 @@ export default function MyBookings({ onPageChange }) {
                                                     <span style={{ fontSize: "13px", color: "#334155", fontWeight: 500 }}>{booking.purpose}</span>
                                                 </td>
                                                 <td style={{ padding: "20px 24px" }}>
-                                                    <span style={{
-                                                        display: "inline-flex", alignItems: "center", gap: "6px",
-                                                        padding: "5px 12px", borderRadius: "20px",
-                                                        background: sc.bg, color: sc.color,
+                                                    <span style={{ 
+                                                        display: "inline-flex", alignItems: "center", gap: "6px", 
+                                                        padding: "5px 12px", borderRadius: "20px", 
+                                                        background: sc.bg, color: sc.color, 
                                                         fontSize: "11px", fontWeight: 700,
                                                         border: `1px solid ${sc.dot}20`
                                                     }}>
@@ -192,15 +192,15 @@ export default function MyBookings({ onPageChange }) {
                                                 </td>
                                                 <td style={{ padding: "20px 24px" }}>
                                                     {booking.status === "Pending" && (
-                                                        <button onClick={() => handleCancel(booking.booking_id)} style={{
-                                                            padding: "6px 14px", borderRadius: "10px",
-                                                            background: "#fff1f2", color: "#e11d48",
-                                                            fontSize: "12px", fontWeight: 700,
+                                                        <button onClick={() => handleCancel(booking.booking_id)} style={{ 
+                                                            padding: "6px 14px", borderRadius: "10px", 
+                                                            background: "#fff1f2", color: "#e11d48", 
+                                                            fontSize: "12px", fontWeight: 700, 
                                                             border: "1px solid #fecdd3", cursor: "pointer",
                                                             transition: 'all 0.2s'
                                                         }}
-                                                            onMouseEnter={(e) => { e.currentTarget.style.background = "#e11d48"; e.currentTarget.style.color = "white"; }}
-                                                            onMouseLeave={(e) => { e.currentTarget.style.background = "#fff1f2"; e.currentTarget.style.color = "#e11d48"; }}>
+                                                        onMouseEnter={(e) => { e.currentTarget.style.background = "#e11d48"; e.currentTarget.style.color = "white"; }}
+                                                        onMouseLeave={(e) => { e.currentTarget.style.background = "#fff1f2"; e.currentTarget.style.color = "#e11d48"; }}>
                                                             Cancel
                                                         </button>
                                                     )}

@@ -25,7 +25,7 @@ function BookingModal({ room, bookingDate, onConfirm, onCancel, loading }) {
             <div style={{ width: "100%", maxWidth: "420px", background: "white", borderRadius: "24px", padding: "32px", boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)' }}>
                 <h3 style={{ fontSize: "20px", fontWeight: 800, color: "#1e293b", marginBottom: "8px" }}>Reserve Room {room.room_number}</h3>
                 <p style={{ fontSize: "14px", color: "#64748b", marginBottom: "24px" }}>{room.building} · Capacity: {room.capacity}</p>
-
+                
                 <div style={{ marginBottom: "20px" }}>
                     <label style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "#94a3b8", fontWeight: 700, letterSpacing: "0.05em" }}>PURPOSE OF BOOKING</label>
                     <select value={purpose} onChange={(e) => setPurpose(e.target.value)} style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", outline: "none", background: "#f8fafc", border: "1px solid #e2e8f0", color: "#1e293b", fontSize: "14px", fontWeight: '500' }}>
@@ -119,11 +119,11 @@ export default function RoomFinder() {
             </div>
 
             {message.text && (
-                <div style={{
-                    padding: "14px 20px", borderRadius: "12px", marginBottom: "24px",
-                    background: message.type === "success" ? "#f0fdf4" : "#fef2f2",
-                    border: `1px solid ${message.type === "success" ? "#dcfce7" : "#fecaca"}`,
-                    color: message.type === "success" ? "#15803d" : "#b91c1c",
+                <div style={{ 
+                    padding: "14px 20px", borderRadius: "12px", marginBottom: "24px", 
+                    background: message.type === "success" ? "#f0fdf4" : "#fef2f2", 
+                    border: `1px solid ${message.type === "success" ? "#dcfce7" : "#fecaca"}`, 
+                    color: message.type === "success" ? "#15803d" : "#b91c1c", 
                     fontSize: "14px", fontWeight: 600,
                     display: 'flex', alignItems: 'center', gap: '10px'
                 }}>
@@ -133,9 +133,9 @@ export default function RoomFinder() {
             )}
 
             {/* Filter Bar */}
-            <div style={{
-                background: "white", border: "1px solid #e2e8f0", borderRadius: "20px",
-                padding: "24px", display: "grid", gridTemplateColumns: "1fr 1fr 1fr auto",
+            <div style={{ 
+                background: "white", border: "1px solid #e2e8f0", borderRadius: "20px", 
+                padding: "24px", display: "grid", gridTemplateColumns: "1fr 1fr 1fr auto", 
                 gap: "20px", marginBottom: "32px", alignItems: "end",
                 boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
             }}>
@@ -182,9 +182,9 @@ export default function RoomFinder() {
                         const isBooked = bookedIds.includes(room.room_id);
                         const tc = typeColors[room.room_type] || "#8b5cf6";
                         return (
-                            <div key={room.room_id} style={{
-                                background: "white", border: `1px solid ${isBooked ? "#dcfce7" : "#eef2f6"}`,
-                                borderRadius: "20px", overflow: "hidden",
+                            <div key={room.room_id} style={{ 
+                                background: "white", border: `1px solid ${isBooked ? "#dcfce7" : "#eef2f6"}`, 
+                                borderRadius: "20px", overflow: "hidden", 
                                 boxShadow: isBooked ? '0 10px 15px -3px rgba(34,197,94,0.05)' : '0 4px 6px -1px rgba(0,0,0,0.02)'
                             }}>
                                 <div style={{ height: "4px", background: tc }} />
@@ -199,21 +199,21 @@ export default function RoomFinder() {
                                                 📍 {room.building} · Floor {room.floor}
                                             </div>
                                         </div>
-                                        <div style={{
-                                            padding: "4px 10px", borderRadius: "20px",
-                                            background: isBooked ? "#f0fdf4" : "#f1f5f9",
-                                            color: isBooked ? "#16a34a" : "#64748b",
+                                        <div style={{ 
+                                            padding: "4px 10px", borderRadius: "20px", 
+                                            background: isBooked ? "#f0fdf4" : "#f1f5f9", 
+                                            color: isBooked ? "#16a34a" : "#64748b", 
                                             fontSize: "11px", fontWeight: 700,
                                             border: `1px solid ${isBooked ? "#dcfce7" : "#e2e8f0"}`
                                         }}>
                                             {isBooked ? "✓ Confirmed" : "Available"}
                                         </div>
                                     </div>
-
-                                    <div style={{
-                                        display: "flex", alignItems: "center", gap: "12px",
-                                        padding: "12px", borderRadius: "12px", background: "#f8fafc",
-                                        marginBottom: "24px"
+                                    
+                                    <div style={{ 
+                                        display: "flex", alignItems: "center", gap: "12px", 
+                                        padding: "12px", borderRadius: "12px", background: "#f8fafc", 
+                                        marginBottom: "24px" 
                                     }}>
                                         <span style={{ fontSize: '18px' }}>👥</span>
                                         <span style={{ fontSize: "14px", fontWeight: 700, color: "#1e293b" }}>{room.capacity}</span>
@@ -221,23 +221,23 @@ export default function RoomFinder() {
                                     </div>
 
                                     {isBooked ? (
-                                        <div style={{
-                                            width: "100%", padding: "12px", borderRadius: "12px",
-                                            background: "#f0fdf4", color: "#16a34a",
-                                            fontSize: "14px", fontWeight: 700, textAlign: "center",
-                                            border: "1px solid #dcfce7"
+                                        <div style={{ 
+                                            width: "100%", padding: "12px", borderRadius: "12px", 
+                                            background: "#f0fdf4", color: "#16a34a", 
+                                            fontSize: "14px", fontWeight: 700, textAlign: "center", 
+                                            border: "1px solid #dcfce7" 
                                         }}>
                                             Request Sent
                                         </div>
                                     ) : (
-                                        <button onClick={() => setModalRoom(room)} style={{
-                                            width: "100%", padding: "12px", borderRadius: "12px",
-                                            background: "white", color: "#7c3aed",
-                                            fontSize: "14px", fontWeight: 700, border: "1px solid #ddd6fe",
+                                        <button onClick={() => setModalRoom(room)} style={{ 
+                                            width: "100%", padding: "12px", borderRadius: "12px", 
+                                            background: "white", color: "#7c3aed", 
+                                            fontSize: "14px", fontWeight: 700, border: "1px solid #ddd6fe", 
                                             cursor: "pointer", transition: 'all 0.2s'
                                         }}
-                                            onMouseEnter={(e) => { e.currentTarget.style.background = "#7c3aed"; e.currentTarget.style.color = "#white"; }}
-                                            onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.color = "#7c3aed"; }}>
+                                        onMouseEnter={(e) => { e.currentTarget.style.background = "#7c3aed"; e.currentTarget.style.color = "#white"; }}
+                                        onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.color = "#7c3aed"; }}>
                                             Book This Room
                                         </button>
                                     )}
@@ -259,7 +259,7 @@ export default function RoomFinder() {
             {modalRoom && (
                 <BookingModal room={modalRoom} bookingDate={selectedDate} onConfirm={confirmBooking} onCancel={() => setModalRoom(null)} loading={bookingLoading} />
             )}
-
+            
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
     );
