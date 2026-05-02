@@ -1,24 +1,5 @@
 /**
  * Admin Service - Matches Backend Admin Routes
- * Endpoints:
- * - GET /admin/departments
- * - POST /admin/department
- * - DELETE /admin/department/:id
- * - GET /admin/teachers
- * - POST /admin/teacher
- * - DELETE /admin/teacher/:id
- * - GET /admin/students
- * - POST /admin/student
- * - DELETE /admin/student/:id
- * - GET /admin/rooms
- * - POST /admin/room
- * - DELETE /admin/room/:id
- * - GET /admin/courses
- * - POST /admin/course
- * - DELETE /admin/course/:id
- * - GET /admin/room-bookings
- * - PUT /admin/room-booking/:id/approve
- * - PUT /admin/room-booking/:id/reject
  */
 
 import api from './api_config';
@@ -28,7 +9,6 @@ import api from './api_config';
 export const getDepartments = async () => {
     try {
         const response = await api.get('/admin/departments');
-        // Backend returns array directly
         return {
             success: true,
             data: response.data || [],
@@ -322,23 +302,25 @@ export const deleteCourse = async (courseCode) => {
 
 export const uploadTimetable = async (file) => {
     try {
+        console.log("📤 Uploading file:", file.name, file.size, "bytes");
+        
         const formData = new FormData();
         formData.append('file', file);
         
-        const response = await api.post('/admin/timetable/upload', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
+        const response = await api.post('/admin/timetable/upload', formData);
+        
+        console.log("✅ Upload response:", response.data);
         
         return {
             success: true,
             data: response.data,
         };
     } catch (error) {
+        console.error("❌ Upload error:", error);
+        console.error("❌ Error response:", error.response);
         return {
             success: false,
-            message: error.response?.data?.error || 'Failed to upload timetable',
+            message: error.response?.data?.error || error.message || 'Failed to upload timetable',
         };
     }
 };

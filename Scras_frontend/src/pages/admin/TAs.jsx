@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { getTAs, createTA, deleteTA } from '../../services/admin_service';
-import { getDepartments } from '../../services/admin_service';
+import { getDepartments, getTeachers } from '../../services/admin_service';
 import SearchBar from '../../components/common/SearchBar';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ConfirmModal from '../../components/common/ConfirmModal';
@@ -13,6 +13,7 @@ import ConfirmModal from '../../components/common/ConfirmModal';
 const TAs = () => {
     const [tas, setTAs] = useState([]);
     const [departments, setDepartments] = useState([]);
+    const [teachers, setTeachers] = useState([]); // ✅ Added
     const [filteredTAs, setFilteredTAs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -23,7 +24,9 @@ const TAs = () => {
         name: '',
         email: '',
         password: 'password123',
-        department_id: ''
+        roll_number: '', // ✅ Added
+        department_id: '',
+        teacher_email: '' // ✅ Changed from teacher_id
     });
     const [error, setError] = useState('');
 
@@ -37,9 +40,10 @@ const TAs = () => {
 
     const fetchData = async () => {
         setLoading(true);
-        const [tasRes, deptsRes] = await Promise.all([
+        const [tasRes, deptsRes, teachersRes] = await Promise.all([
             getTAs(),
-            getDepartments()
+            getDepartments(),
+            getTeachers() // ✅ Added
         ]);
 
         if (tasRes.success) {
@@ -47,6 +51,9 @@ const TAs = () => {
         }
         if (deptsRes.success) {
             setDepartments(deptsRes.data || []);
+        }
+        if (teachersRes.success) {
+            setTeachers(teachersRes.data || []); // ✅ Added
         }
         setLoading(false);
     };
@@ -57,22 +64,48 @@ const TAs = () => {
         } else {
             const filtered = tas.filter(ta =>
                 ta.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                ta.email?.toLowerCase().includes(searchTerm.toLowerCase())
+                ta.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                ta.roll_number?.toLowerCase().includes(searchTerm.toLowerCase())
             );
             setFilteredTAs(filtered);
         }
     };
 
     const handleAddTA = async () => {
-        if (!formData.name || !formData.email || !formData.department_id) {
+        console.log("📤 Form data before validation:", formData);
+
+        if (!formData.name || !formData.email || !formData.roll_number || !formData.department_id || !formData.teacher_email) {
             setError('All fields are required');
             return;
         }
 
-        const result = await createTA(formData);
+        // ✅ Convert department_id to integer
+        const dataToSend = {
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            roll_number: formData.roll_number,
+            department_id: parseInt(formData.department_id),
+            teacher_email: formData.teacher_email
+        };
+
+        console.log("📤 Data being sent to backend:", dataToSend);
+
+        const result = await createTA(dataToSend);
+        
+        console.log("📬 Response from backend:", result);
+
         if (result.success) {
             setShowAddModal(false);
-            setFormData({ name: '', email: '', password: 'password123', department_id: '' });
+            setFormData({
+                name: '',
+                email: '',
+                password: 'password123',
+                roll_number: '',
+                department_id: '',
+                teacher_email: ''
+            });
+            setError('');
             fetchData();
         } else {
             setError(result.message);
@@ -95,7 +128,7 @@ const TAs = () => {
     if (loading) return <LoadingSpinner />;
 
     return (
-        <div className="teachers-page"> {/* Reusing teachers-page class for design consistency */}
+        <div className="teachers-page">
             <div className="page-header">
                 <div className="page-title">
                     <h1>Teaching Assistants</h1>
@@ -144,9 +177,10 @@ const TAs = () => {
                     <thead>
                         <tr>
                             <th>TA MEMBER</th>
+                            <th>ROLL NUMBER</th>
                             <th>DEPARTMENT</th>
+                            <th>SUPERVISOR</th>
                             <th>EMAIL</th>
-                            <th>STATUS</th>
                             <th>ACTIONS</th>
                         </tr>
                     </thead>
@@ -166,13 +200,10 @@ const TAs = () => {
                                             <strong>{ta.name}</strong>
                                         </div>
                                     </td>
-                                    <td><span className={`badge badge-${color}`}>{ta.Department?.name || 'N/A'}</span></td>
+                                    <td>{ta.roll_number}</td>
+                                    <td><span className={`badge badge-${color}`}>{ta.department_name || 'N/A'}</span></td>
+                                    <td><span style={{color: '#64748b'}}>👨‍🏫 {ta.teacher_name || 'N/A'}</span></td>
                                     <td><span style={{color: '#64748b'}}>✉️ {ta.email}</span></td>
-                                    <td>
-                                        <span className={`badge badge-green`}>
-                                            <span className="status-dot"></span> Active
-                                        </span>
-                                    </td>
                                     <td>
                                         <button
                                             className="btn-icon btn-danger"
@@ -197,51 +228,83 @@ const TAs = () => {
             {/* Add TA Modal */}
             <ConfirmModal
                 isOpen={showAddModal}
-                onClose={() => setShowAddModal(false)}
+                onClose={() => {
+                    setShowAddModal(false);
+                    setError('');
+                }}
                 onConfirm={handleAddTA}
                 title="Add Teaching Assistant"
                 message={
                     <div className="modal-form">
-                        <div className="form-group">
-                            <label>Name:</label>
-                            <input
-                                type="text"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                placeholder="John Doe"
-                            />
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>Name:</label>
+                                <input
+                                    type="text"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    placeholder="Saad"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Roll Number:</label>
+                                <input
+                                    type="text"
+                                    value={formData.roll_number}
+                                    onChange={(e) => setFormData({ ...formData, roll_number: e.target.value })}
+                                    placeholder="24L-0823"
+                                />
+                            </div>
                         </div>
-                        <div className="form-group">
-                            <label>Email:</label>
-                            <input
-                                type="email"
-                                value={formData.email}
-                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                placeholder="ta.name@university.edu"
-                            />
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>Email:</label>
+                                <input
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                    placeholder="l240823@lhr.nu.edu.pk"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Password:</label>
+                                <input
+                                    type="password"
+                                    value={formData.password}
+                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                    placeholder="••••••••"
+                                />
+                            </div>
                         </div>
-                        <div className="form-group">
-                            <label>Password:</label>
-                            <input
-                                type="password"
-                                value={formData.password}
-                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                placeholder="password123"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Department:</label>
-                            <select
-                                value={formData.department_id}
-                                onChange={(e) => setFormData({ ...formData, department_id: e.target.value })}
-                            >
-                                <option value="">Select Department</option>
-                                {departments.map(dept => (
-                                    <option key={dept.department_id} value={dept.department_id}>
-                                        {dept.name}
-                                    </option>
-                                ))}
-                            </select>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>Department:</label>
+                                <select
+                                    value={formData.department_id}
+                                    onChange={(e) => setFormData({ ...formData, department_id: e.target.value })}
+                                >
+                                    <option value="">Select Department</option>
+                                    {departments.map(dept => (
+                                        <option key={dept.department_id} value={dept.department_id}>
+                                            {dept.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label>Supervisor Teacher:</label>
+                                <select
+                                    value={formData.teacher_email}
+                                    onChange={(e) => setFormData({ ...formData, teacher_email: e.target.value })}
+                                >
+                                    <option value="">Select Teacher</option>
+                                    {teachers.map(teacher => (
+                                        <option key={teacher.teacher_id} value={teacher.email}>
+                                            {teacher.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                     </div>
                 }

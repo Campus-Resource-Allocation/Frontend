@@ -12,6 +12,8 @@ const statusConfig = {
     Confirmed: { label: "Approved", bg: "#f0fdf4", color: "#16a34a", dot: "#22c55e", icon: "✓" },
     Pending: { label: "Pending Review", bg: "#fffbeb", color: "#d97706", dot: "#f59e0b", icon: "◷" },
     Cancelled: { label: "Cancelled", bg: "#fef2f2", color: "#dc2626", dot: "#ef4444", icon: "✕" },
+    Rejected: { label: "Rejected", bg: "#fef2f2", color: "#dc2626", dot: "#ef4444", icon: "✕" },
+    Approved: { label: "Approved", bg: "#f0fdf4", color: "#16a34a", dot: "#22c55e", icon: "✓" },
 };
 
 const roomTypeIcons = {
@@ -31,24 +33,41 @@ export default function MyBookings({ onPageChange }) {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState({ text: "", type: "" });
 
-    useEffect(() => { loadBookings(); }, [service]);
+    useEffect(() => { 
+        console.log("🎬 Component Mounted - MyBookings");
+        console.log("👤 Current User:", user);
+        console.log("🎭 User Role:", user?.role);
+        console.log("🔧 Service Selected:", user?.role?.toLowerCase() === "ta" ? "TA Service" : "Teacher Service");
+        loadBookings(); 
+    }, []);
 
     const loadBookings = async () => {
         setLoading(true);
+        console.log("🚀 Loading bookings...");
+        console.log("📝 Current User:", user);
+        console.log("🔧 Selected Service:", service === taService ? 'TA Service' : 'Teacher Service');
+        
         const data = await service.getMyBookings();
+        
+        console.log("📬 Service Response:", data);
+        console.log("✅ Success:", data?.success);
+        console.log("📋 Data:", data?.data);
+        console.log("🔢 Bookings Count:", data?.data?.length || 0);
+        
         setLoading(false);
-        if (data?.success) setBookings(data.data || []);
-        else setBookings([]);
-    };
-
-    const handleCancel = async (bookingId) => {
-        if (!window.confirm("Are you sure you want to cancel this booking?")) return;
-        const data = await service.cancelBooking(bookingId);
+        
         if (data?.success) {
-            setMessage({ text: "Success! Your booking has been cancelled.", type: "success" });
-            setBookings((prev) => prev.map((b) => b.booking_id === bookingId ? { ...b, status: "Cancelled" } : b));
+            const bookingsData = data.data || [];
+            setBookings(bookingsData);
+            console.log("✨ Bookings Set Successfully:", bookingsData);
+            console.log("📊 Total bookings in state:", bookingsData.length);
         } else {
-            setMessage({ text: data?.message || "Failed to cancel booking.", type: "error" });
+            setBookings([]);
+            console.log("⚠️ No bookings or error:", data?.message);
+            setMessage({ 
+                text: data?.message || "Could not load bookings", 
+                type: "error" 
+            });
         }
     };
 
@@ -60,10 +79,13 @@ export default function MyBookings({ onPageChange }) {
     };
 
     const counts = {
-        approved: bookings.filter(b => b.status === 'Confirmed').length,
+        approved: bookings.filter(b => b.status === 'Confirmed' || b.status === 'Approved').length,
         pending: bookings.filter(b => b.status === 'Pending').length,
-        cancelled: bookings.filter(b => b.status === 'Cancelled').length,
+        cancelled: bookings.filter(b => b.status === 'Cancelled' || b.status === 'Rejected').length,
     };
+
+    console.log("📊 Current Stats:", counts);
+    console.log("📋 Current Bookings in State:", bookings);
 
     return (
         <div style={{ padding: "0" }}>
@@ -89,8 +111,14 @@ export default function MyBookings({ onPageChange }) {
                         boxShadow: '0 10px 15px -3px rgba(124, 58, 237, 0.3)',
                         transition: 'all 0.2s'
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 15px 20px -3px rgba(124, 58, 237, 0.4)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(124, 58, 237, 0.3)'; }}
+                    onMouseEnter={(e) => { 
+                        e.currentTarget.style.transform = 'translateY(-2px)'; 
+                        e.currentTarget.style.boxShadow = '0 15px 20px -3px rgba(124, 58, 237, 0.4)'; 
+                    }}
+                    onMouseLeave={(e) => { 
+                        e.currentTarget.style.transform = 'translateY(0)'; 
+                        e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(124, 58, 237, 0.3)'; 
+                    }}
                 >
                     <span style={{ fontSize: '18px', fontWeight: '400' }}>+</span> Book New Room
                 </button>
@@ -98,13 +126,30 @@ export default function MyBookings({ onPageChange }) {
 
             {message.text && (
                 <div style={{ 
-                    padding: "14px 20px", borderRadius: "12px", marginBottom: "24px", 
+                    padding: "14px 20px", 
+                    borderRadius: "12px", 
+                    marginBottom: "24px", 
                     background: message.type === "success" ? "#f0fdf4" : "#fef2f2", 
                     border: `1px solid ${message.type === "success" ? "#dcfce7" : "#fecaca"}`, 
                     color: message.type === "success" ? "#15803d" : "#b91c1c", 
-                    fontSize: "14px", fontWeight: 600
+                    fontSize: "14px", 
+                    fontWeight: 600,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
                 }}>
-                    {message.text}
+                    <span>{message.text}</span>
+                    <button 
+                        onClick={() => setMessage({ text: "", type: "" })}
+                        style={{ 
+                            background: 'transparent', 
+                            border: 'none', 
+                            cursor: 'pointer',
+                            fontSize: '18px',
+                            color: 'inherit',
+                            padding: '0 8px'
+                        }}
+                    >×</button>
                 </div>
             )}
 
@@ -116,19 +161,32 @@ export default function MyBookings({ onPageChange }) {
                     { label: "Cancelled", value: counts.cancelled, ...statusConfig.Cancelled },
                 ].map((s) => (
                     <div key={s.label} style={{ 
-                        background: "white", border: "1px solid #e2e8f0", borderRadius: "20px", 
-                        padding: "24px", display: "flex", alignItems: "center", gap: "20px",
+                        background: "white", 
+                        border: "1px solid #e2e8f0", 
+                        borderRadius: "20px", 
+                        padding: "24px", 
+                        display: "flex", 
+                        alignItems: "center", 
+                        gap: "20px",
                         boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
                     }}>
                         <div style={{ 
-                            width: "48px", height: "48px", borderRadius: "14px", 
-                            background: s.bg, display: "flex", alignItems: "center", 
-                            justifyContent: "center", fontSize: "20px", color: s.color,
+                            width: "48px", 
+                            height: "48px", 
+                            borderRadius: "14px", 
+                            background: s.bg, 
+                            display: "flex", 
+                            alignItems: "center", 
+                            justifyContent: "center", 
+                            fontSize: "20px", 
+                            color: s.color,
                             border: `1px solid ${s.dot}20`
                         }}>{s.icon}</div>
                         <div>
                             <p style={{ fontSize: "24px", fontWeight: 800, color: "#1e293b", margin: 0 }}>{s.value}</p>
-                            <p style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, margin: 0, letterSpacing: '0.02em' }}>{s.label.toUpperCase()}</p>
+                            <p style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, margin: 0, letterSpacing: '0.02em' }}>
+                                {s.label.toUpperCase()}
+                            </p>
                         </div>
                     </div>
                 ))}
@@ -136,11 +194,25 @@ export default function MyBookings({ onPageChange }) {
 
             {loading ? (
                 <div style={{ textAlign: "center", padding: "60px 0" }}>
-                    <div style={{ width: '32px', height: '32px', border: '3px solid #f1f5f9', borderTopColor: '#7c3aed', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }}></div>
+                    <div style={{ 
+                        width: '32px', 
+                        height: '32px', 
+                        border: '3px solid #f1f5f9', 
+                        borderTopColor: '#7c3aed', 
+                        borderRadius: '50%', 
+                        animation: 'spin 0.8s linear infinite', 
+                        margin: '0 auto 16px' 
+                    }}></div>
                     <p style={{ color: "#64748b", fontSize: "14px" }}>Fetching your reservations...</p>
                 </div>
             ) : (
-                <div style={{ background: "white", border: "1px solid #eef2f6", borderRadius: "24px", overflow: "hidden", boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+                <div style={{ 
+                    background: "white", 
+                    border: "1px solid #eef2f6", 
+                    borderRadius: "24px", 
+                    overflow: "hidden", 
+                    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' 
+                }}>
                     {bookings.length === 0 ? (
                         <div style={{ textAlign: "center", padding: "80px 0", color: "#94a3b8" }}>
                             <div style={{ fontSize: "48px", marginBottom: "16px" }}>📅</div>
@@ -152,8 +224,15 @@ export default function MyBookings({ onPageChange }) {
                             <table style={{ width: "100%", borderCollapse: "collapse" }}>
                                 <thead>
                                     <tr style={{ background: "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
-                                        {["ROOM", "DATE & TIME", "PURPOSE", "STATUS", "ACTION"].map((col) => (
-                                            <th key={col} style={{ textAlign: "left", padding: "16px 24px", fontSize: "11px", color: "#94a3b8", fontWeight: 800, letterSpacing: "0.06em" }}>{col}</th>
+                                        {["ROOM", "DATE & TIME", "PURPOSE", "STATUS"].map((col) => (
+                                            <th key={col} style={{ 
+                                                textAlign: "left", 
+                                                padding: "16px 24px", 
+                                                fontSize: "11px", 
+                                                color: "#94a3b8", 
+                                                fontWeight: 800, 
+                                                letterSpacing: "0.06em" 
+                                            }}>{col}</th>
                                         ))}
                                     </tr>
                                 </thead>
@@ -161,49 +240,56 @@ export default function MyBookings({ onPageChange }) {
                                     {bookings.map((booking, idx) => {
                                         const sc = statusConfig[booking.status] || statusConfig.Pending;
                                         return (
-                                            <tr key={booking.booking_id} style={{ borderBottom: "1px solid #f8fafc" }}>
+                                            <tr key={booking.booking_id || idx} style={{ borderBottom: "1px solid #f8fafc" }}>
                                                 <td style={{ padding: "20px 24px" }}>
                                                     <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                                                        <span style={{ fontSize: '20px' }}>{roomTypeIcons[booking.room_type] || '🏛️'}</span>
+                                                        <span style={{ fontSize: '20px' }}>
+                                                            {roomTypeIcons[booking.room_type] || '🏛️'}
+                                                        </span>
                                                         <div>
-                                                            <div style={{ fontSize: "14px", fontWeight: 800, color: "#1e293b" }}>{booking.room_number}</div>
-                                                            <div style={{ fontSize: "11px", color: "#64748b", fontWeight: 500 }}>{booking.room_type}</div>
+                                                            <div style={{ fontSize: "14px", fontWeight: 800, color: "#1e293b" }}>
+                                                                {booking.room_number}
+                                                            </div>
+                                                            <div style={{ fontSize: "11px", color: "#64748b", fontWeight: 500 }}>
+                                                                {booking.room_type}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td style={{ padding: "20px 24px" }}>
-                                                    <div style={{ fontSize: "14px", fontWeight: 600, color: "#1e293b" }}>{formatDate(booking.booking_date)}</div>
-                                                    <div style={{ fontSize: "12px", color: "#64748b" }}>{booking.start_time} – {booking.end_time}</div>
+                                                    <div style={{ fontSize: "14px", fontWeight: 600, color: "#1e293b" }}>
+                                                        {formatDate(booking.booking_date)}
+                                                    </div>
+                                                    <div style={{ fontSize: "12px", color: "#64748b" }}>
+                                                        {booking.start_time} – {booking.end_time}
+                                                    </div>
                                                 </td>
                                                 <td style={{ padding: "20px 24px" }}>
-                                                    <span style={{ fontSize: "13px", color: "#334155", fontWeight: 500 }}>{booking.purpose}</span>
-                                                </td>
-                                                <td style={{ padding: "20px 24px" }}>
-                                                    <span style={{ 
-                                                        display: "inline-flex", alignItems: "center", gap: "6px", 
-                                                        padding: "5px 12px", borderRadius: "20px", 
-                                                        background: sc.bg, color: sc.color, 
-                                                        fontSize: "11px", fontWeight: 700,
-                                                        border: `1px solid ${sc.dot}20`
-                                                    }}>
-                                                        <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: sc.dot }} />
-                                                        {sc.label}
+                                                    <span style={{ fontSize: "13px", color: "#334155", fontWeight: 500 }}>
+                                                        {booking.purpose}
                                                     </span>
                                                 </td>
                                                 <td style={{ padding: "20px 24px" }}>
-                                                    {booking.status === "Pending" && (
-                                                        <button onClick={() => handleCancel(booking.booking_id)} style={{ 
-                                                            padding: "6px 14px", borderRadius: "10px", 
-                                                            background: "#fff1f2", color: "#e11d48", 
-                                                            fontSize: "12px", fontWeight: 700, 
-                                                            border: "1px solid #fecdd3", cursor: "pointer",
-                                                            transition: 'all 0.2s'
-                                                        }}
-                                                        onMouseEnter={(e) => { e.currentTarget.style.background = "#e11d48"; e.currentTarget.style.color = "white"; }}
-                                                        onMouseLeave={(e) => { e.currentTarget.style.background = "#fff1f2"; e.currentTarget.style.color = "#e11d48"; }}>
-                                                            Cancel
-                                                        </button>
-                                                    )}
+                                                    <span style={{ 
+                                                        display: "inline-flex", 
+                                                        alignItems: "center", 
+                                                        gap: "6px", 
+                                                        padding: "5px 12px", 
+                                                        borderRadius: "20px", 
+                                                        background: sc.bg, 
+                                                        color: sc.color, 
+                                                        fontSize: "11px", 
+                                                        fontWeight: 700,
+                                                        border: `1px solid ${sc.dot}20`
+                                                    }}>
+                                                        <span style={{ 
+                                                            width: "6px", 
+                                                            height: "6px", 
+                                                            borderRadius: "50%", 
+                                                            background: sc.dot 
+                                                        }} />
+                                                        {sc.label}
+                                                    </span>
                                                 </td>
                                             </tr>
                                         );

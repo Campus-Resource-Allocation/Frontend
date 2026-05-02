@@ -25,6 +25,8 @@ const TimetableUpload = () => {
         if (['xls', 'xlsx'].includes(extension)) {
             setFile(selectedFile);
             setError('');
+            setResult(null); // ✅ Clear previous result
+            console.log("📁 File selected:", selectedFile.name, selectedFile.size, "bytes");
         } else {
             setError('Please upload a valid Excel file (.xls or .xlsx)');
             setFile(null);
@@ -51,19 +53,29 @@ const TimetableUpload = () => {
     };
 
     const handleUpload = async () => {
-        if (!file) return;
+        if (!file) {
+            setError('Please select a file first');
+            return;
+        }
 
         setUploading(true);
         setError('');
         setResult(null);
 
+        console.log("🚀 Starting upload for:", file.name);
+
         const response = await uploadTimetable(file);
+        
+        console.log("📬 Upload response:", response);
         
         if (response.success) {
             setResult(response.data);
             setFile(null);
+            // ✅ Reset file input
+            const fileInput = document.getElementById('file-upload');
+            if (fileInput) fileInput.value = '';
         } else {
-            setError(response.message);
+            setError(response.message || 'Upload failed');
         }
         setUploading(false);
     };
@@ -145,10 +157,12 @@ const TimetableUpload = () => {
                     border: '1px solid #dcfce7'
                 }}>
                     <h4 style={{ fontWeight: '700', marginBottom: '8px' }}>✅ Upload Successful!</h4>
-                    <p style={{ fontSize: '14px' }}>{result.message}</p>
-                    <div style={{ marginTop: '12px', fontSize: '13px', opacity: 0.8 }}>
-                        Processed {result.total_records} schedule entries into the database.
-                    </div>
+                    <p style={{ fontSize: '14px', marginBottom: '8px' }}>{result.message}</p>
+                    {result.total_records && (
+                        <div style={{ marginTop: '12px', fontSize: '13px', opacity: 0.8 }}>
+                            Processed <strong>{result.total_records}</strong> schedule entries into the database.
+                        </div>
+                    )}
                 </div>
             )}
 

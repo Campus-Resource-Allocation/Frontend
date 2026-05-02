@@ -16,11 +16,21 @@ export const searchAvailableRooms = async (roomType, bookingDate, startTime, end
             }
         });
         
-        // Backend returns {success: true, data: [...]}
-        return response.data;
+        console.log("🔍 TA Service - Search Rooms Response:", response.data);
+        
+        // Handle both response formats
+        if (response.data && typeof response.data === 'object' && 'success' in response.data) {
+            return response.data; // Backend already returns {success: true, data: [...]}
+        }
+        
+        // Backend returns array directly
+        return {
+            success: true,
+            data: Array.isArray(response.data) ? response.data : []
+        };
         
     } catch (error) {
-        console.error('Search rooms error:', error);
+        console.error('❌ TA Service - Search rooms error:', error);
         return {
             success: false,
             data: [],
@@ -39,11 +49,20 @@ export const bookRoom = async (roomId, bookingDate, startTime, endTime, purpose)
             purpose
         });
         
-        // Backend returns {success: true, message: "..."}
-        return response.data;
+        console.log("✅ TA Service - Book Room Response:", response.data);
+        
+        // Handle both response formats
+        if (response.data && typeof response.data === 'object' && 'success' in response.data) {
+            return response.data;
+        }
+        
+        return {
+            success: true,
+            data: response.data
+        };
         
     } catch (error) {
-        console.error('Book room error:', error);
+        console.error('❌ TA Service - Book room error:', error);
         return {
             success: false,
             message: error.response?.data?.error || 'Failed to book room'
@@ -53,13 +72,43 @@ export const bookRoom = async (roomId, bookingDate, startTime, endTime, purpose)
 
 export const getMyBookings = async () => {
     try {
+        console.log("🚀 TA Service - Fetching bookings from /ta/my-bookings");
+        
         const response = await api.get('/ta/my-bookings');
         
-        // Backend returns {success: true, data: [...]}
-        return response.data;
+        console.log("📡 TA Service - Raw Response:", response);
+        console.log("📦 TA Service - Response Data:", response.data);
+        console.log("📊 TA Service - Data Type:", typeof response.data, "Is Array:", Array.isArray(response.data));
+        
+        // ✅ FIX: Handle the array response from backend
+        let bookingsArray = [];
+        
+        if (Array.isArray(response.data)) {
+            // Backend returns array directly: [{...}, {...}]
+            bookingsArray = response.data;
+            console.log("✨ TA Service - Backend returned array directly");
+        } else if (response.data && typeof response.data === 'object') {
+            if ('success' in response.data && 'data' in response.data) {
+                // Backend returns {success: true, data: [...]}
+                bookingsArray = response.data.data || [];
+                console.log("✨ TA Service - Backend returned object with data property");
+            } else if ('data' in response.data) {
+                // Backend returns {data: [...]}
+                bookingsArray = response.data.data || [];
+            }
+        }
+        
+        console.log("✅ TA Service - Final Bookings Array:", bookingsArray);
+        console.log("📈 TA Service - Total Count:", bookingsArray.length);
+        
+        return {
+            success: true,
+            data: bookingsArray
+        };
         
     } catch (error) {
-        console.error('Get bookings error:', error);
+        console.error('❌ TA Service - Get bookings error:', error);
+        console.error('❌ TA Service - Error Response:', error.response);
         return {
             success: false,
             data: [],
@@ -68,33 +117,21 @@ export const getMyBookings = async () => {
     }
 };
 
-export const cancelBooking = async (bookingId) => {
-    try {
-        const response = await api.put('/ta/cancel-booking', {
-            booking_id: bookingId
-        });
-        return {
-            success: true,
-            data: response.data
-        };
-    } catch (error) {
-        return {
-            success: false,
-            message: error.response?.data?.error || 'Failed to cancel booking'
-        };
-    }
-};
-
 export const getTimeSlots = async () => {
     try {
         const response = await api.get('/ta/time-slots');
+        
+        console.log("🕐 TA Service - Time Slots Response:", response.data);
+        
         return {
             success: true,
             data: response.data || []
         };
     } catch (error) {
+        console.error('❌ TA Service - Get time slots error:', error);
         return {
             success: false,
+            data: [],
             message: error.response?.data?.error || 'Failed to fetch time slots'
         };
     }
@@ -104,6 +141,5 @@ export default {
     searchAvailableRooms,
     bookRoom,
     getMyBookings,
-    cancelBooking,
     getTimeSlots
 };

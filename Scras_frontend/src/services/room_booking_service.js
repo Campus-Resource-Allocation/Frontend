@@ -82,25 +82,75 @@ export const bookRoom = async (bookingData) => {
 export const getMyBookings = async () => {
     try {
         const basePath = getBasePath();
-
+        const role = getUserRole();
+        const userId = getUserId();
+        
+        console.log("🔍 DEBUG INFO:");
+        console.log("  - Role:", role);
+        console.log("  - User ID:", userId);
+        console.log("  - Base Path:", basePath);
+        console.log("  - Full URL:", `${basePath}/my-bookings`);
+        
         const response = await api.get(`${basePath}/my-bookings`);
-
-        console.log("Bookings:", response.data); // DEBUG
+        
+        console.log("✅ API Response:", response);
+        console.log("📦 Response Data:", response.data);
+        console.log("📊 Data Type:", typeof response.data, "Is Array:", Array.isArray(response.data));
+        
+        // Handle both array and object responses
+        let bookingsArray = [];
+        
+        if (Array.isArray(response.data)) {
+            bookingsArray = response.data;
+        } else if (response.data && typeof response.data === 'object') {
+            // If backend returns { bookings: [...] } or { data: [...] }
+            bookingsArray = response.data.bookings || response.data.data || [];
+        }
+        
+        console.log("✨ Final Bookings Array:", bookingsArray);
+        console.log("📈 Total Bookings:", bookingsArray.length);
 
         return {
             success: true,
-            data: response.data
+            data: bookingsArray
         };
 
     } catch (error) {
-        console.error(error);
+        console.error("❌ Get bookings error:", error);
+        console.error("❌ Error response:", error.response);
+        console.error("❌ Error message:", error.message);
         return {
             success: false,
+            message: error.response?.data?.error || error.message || 'Failed to fetch bookings',
             data: []
         };
     }
 };
 
+// ==================== CANCEL BOOKING ====================
+
+/**
+ * Cancel a booking
+ * PUT /api/{role}/cancel-booking/:id
+ * @param {number} bookingId - Booking ID to cancel
+ */
+export const cancelBooking = async (bookingId) => {
+    try {
+        const basePath = getRoleBasePath();
+        const response = await api.put(`${basePath}/cancel-booking/${bookingId}`);
+        return {
+            success: true,
+            data: response.data,
+            message: 'Booking cancelled successfully'
+        };
+    } catch (error) {
+        console.error('Cancel booking error:', error);
+        return {
+            success: false,
+            message: error.response?.data?.error || 'Failed to cancel booking'
+        };
+    }
+};
 
 // ==================== TEACHER SCHEDULE ====================
 
@@ -132,5 +182,6 @@ export default {
     searchAvailableRooms,
     bookRoom,
     getMyBookings,
+    cancelBooking,
     getTeacherSchedule
 };

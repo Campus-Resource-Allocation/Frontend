@@ -25,7 +25,7 @@ const Students = () => {
         name: '',
         email: '',
         batch_year: new Date().getFullYear(),
-        section: 'A',
+        semester: '',
         department_id: '',
         password: 'password123'
     });
@@ -69,12 +69,30 @@ const Students = () => {
     };
 
     const handleAddStudent = async () => {
-        if (!formData.name || !formData.email || !formData.department_id || !formData.roll_number || !formData.password) {
+        console.log("📤 Form data before validation:", formData);
+
+        if (!formData.name || !formData.email || !formData.department_id || !formData.roll_number || !formData.password || !formData.semester) {
             setError('All fields are required');
             return;
         }
 
-        const result = await createStudent(formData);
+        // ✅ Ensure all numeric fields are integers
+        const dataToSend = {
+            name: formData.name,
+            email: formData.email,
+            roll_number: formData.roll_number,
+            password: formData.password,
+            semester: parseInt(formData.semester),
+            batch_year: parseInt(formData.batch_year),
+            department_id: parseInt(formData.department_id)
+        };
+
+        console.log("📤 Data being sent to backend:", dataToSend);
+
+        const result = await createStudent(dataToSend);
+        
+        console.log("📬 Response from backend:", result);
+
         if (result.success) {
             setShowAddModal(false);
             setFormData({
@@ -82,10 +100,11 @@ const Students = () => {
                 name: '',
                 email: '',
                 batch_year: new Date().getFullYear(),
-                section: 'A',
+                semester: '',
                 department_id: '',
                 password: 'password123'
             });
+            setError('');
             fetchData();
         } else {
             setError(result.message);
@@ -210,7 +229,7 @@ const Students = () => {
                                         </div>
                                     </td>
                                     <td>{student.roll_number}</td>
-                                    <td><span className={`badge badge-${color}`}>{student.Department?.name || 'N/A'}</span></td>
+                                    <td><span className={`badge badge-${color}`}>{student.department_name || 'N/A'}</span></td>
                                     <td><span className={`badge badge-${yearColor}`}>{displayYear}</span></td>
                                     <td><span style={{color: '#64748b'}}>✉️ {student.email}</span></td>
                                     <td>
@@ -234,7 +253,10 @@ const Students = () => {
             {/* Add Student Modal */}
             <ConfirmModal
                 isOpen={showAddModal}
-                onClose={() => setShowAddModal(false)}
+                onClose={() => {
+                    setShowAddModal(false);
+                    setError('');
+                }}
                 onConfirm={handleAddStudent}
                 title="Add Student"
                 message={
@@ -246,7 +268,7 @@ const Students = () => {
                                     type="text"
                                     value={formData.roll_number}
                                     onChange={(e) => setFormData({ ...formData, roll_number: e.target.value })}
-                                    placeholder="S2024001"
+                                    placeholder="24L-0608"
                                 />
                             </div>
                             <div className="form-group">
@@ -255,7 +277,7 @@ const Students = () => {
                                     type="text"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    placeholder="John Doe"
+                                    placeholder="Subhan"
                                 />
                             </div>
                         </div>
@@ -266,7 +288,7 @@ const Students = () => {
                                     type="email"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    placeholder="john.doe@student.edu"
+                                    placeholder="l240608@lhr.nu.edu.pk"
                                 />
                             </div>
                             <div className="form-group">
@@ -275,7 +297,7 @@ const Students = () => {
                                     type="password"
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    placeholder="password123"
+                                    placeholder="••••••••"
                                 />
                             </div>
                         </div>
@@ -300,7 +322,7 @@ const Students = () => {
                                 <label>Batch Year:</label>
                                 <select
                                     value={formData.batch_year}
-                                    onChange={(e) => setFormData({ ...formData, batch_year: parseInt(e.target.value) })}
+                                    onChange={(e) => setFormData({ ...formData, batch_year: e.target.value })}
                                 >
                                     {years.map(year => (
                                         <option key={year} value={year}>{year}</option>
@@ -308,14 +330,20 @@ const Students = () => {
                                 </select>
                             </div>
                             <div className="form-group">
-                                <label>Section:</label>
+                                <label>Semester:</label>
                                 <select
-                                    value={formData.section}
-                                    onChange={(e) => setFormData({ ...formData, section: e.target.value })}
+                                    value={formData.semester}
+                                    onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
                                 >
-                                    <option value="A">A</option>
-                                    <option value="B">B</option>
-                                    <option value="C">C</option>
+                                    <option value="">Select Semester</option>
+                                    <option value="1">Semester 1</option>
+                                    <option value="2">Semester 2</option>
+                                    <option value="3">Semester 3</option>
+                                    <option value="4">Semester 4</option>
+                                    <option value="5">Semester 5</option>
+                                    <option value="6">Semester 6</option>
+                                    <option value="7">Semester 7</option>
+                                    <option value="8">Semester 8</option>
                                 </select>
                             </div>
                         </div>

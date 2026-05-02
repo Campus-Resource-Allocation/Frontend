@@ -5,10 +5,9 @@ const BASE_URL = 'http://localhost:3000';
 
 const api = axios.create({
     baseURL: BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
     timeout: 15000,
+    // ✅ DON'T set default Content-Type here
+    // Let each request set its own Content-Type
 });
 
 // Add token to requests
@@ -18,6 +17,12 @@ api.interceptors.request.use(
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+        
+        // ✅ Only set Content-Type for non-FormData requests
+        if (config.data && !(config.data instanceof FormData)) {
+            config.headers['Content-Type'] = 'application/json';
+        }
+        
         return config;
     },
     (error) => Promise.reject(error)
