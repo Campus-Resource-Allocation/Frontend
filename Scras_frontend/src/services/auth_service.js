@@ -11,38 +11,8 @@ export const login = async (email, password) => {
             return { success: true, token, user };
         }
         
-        // Fallback for demo accounts if backend is not yet populated
-        if (email === '24l0601@lhr.nu.edu.pk' || email === 'ta.sana@nu.edu.pk' || email === 'hina.i@university.edu') {
-            console.warn('Backend login failed. Using development bypass for demo account.');
-            const mockUser = {
-                id: 999,
-                email: email,
-                name: 'Demo User',
-                role: email.includes('24l') ? 'Student' : email.includes('ta') ? 'TA' : 'Teacher',
-                reference_id: 1
-            };
-            localStorage.setItem('access_token', 'mock-dev-token');
-            localStorage.setItem('user', JSON.stringify(mockUser));
-            return { success: true, token: 'mock-dev-token', user: mockUser };
-        }
-
         return { success: false, message: 'Invalid response from server' };
     } catch (error) {
-        // Fallback for demo accounts if backend is unreachable
-        if (email === '24l0601@lhr.nu.edu.pk' || email === 'ta.sana@nu.edu.pk' || email === 'hina.i@university.edu') {
-            console.warn('Backend unreachable. Using development bypass for demo account.');
-            const mockUser = {
-                id: 999,
-                email: email,
-                name: 'Demo User',
-                role: email.includes('24l') ? 'Student' : email.includes('ta') ? 'TA' : 'Teacher',
-                reference_id: 1
-            };
-            localStorage.setItem('access_token', 'mock-dev-token');
-            localStorage.setItem('user', JSON.stringify(mockUser));
-            return { success: true, token: 'mock-dev-token', user: mockUser };
-        }
-
         return {
             success: false,
             message: error.response?.data?.error || 'Login failed'

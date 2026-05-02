@@ -34,7 +34,7 @@ const ConfirmModal = ({
                     <button className="modal-close" onClick={onClose}>✕</button>
                 </div>
                 <div className="modal-body">
-                    <p>{message}</p>
+                    <div>{message}</div>
                 </div>
                 <div className="modal-footer">
                     <button className="btn-secondary" onClick={onClose}>

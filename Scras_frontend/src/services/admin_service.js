@@ -375,7 +375,25 @@ export const rejectBooking = async (bookingId) => {
 };
 
 // Export all functions
+export const getDashboardStats = async () => {
+    try {
+        const response = await api.get('/admin/dashboard/stats');
+        return {
+            success: true,
+            data: response.data?.data || null,
+        };
+    } catch (error) {
+        console.error('Get dashboard stats error:', error);
+        return {
+            success: false,
+            message: error.response?.data?.error || 'Failed to fetch dashboard stats',
+        };
+    }
+};
+
+// Export all functions
 export default {
+    getDashboardStats,
     getDepartments,
     createDepartment,
     deleteDepartment,

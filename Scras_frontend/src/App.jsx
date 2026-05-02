@@ -24,7 +24,7 @@ import MyBookings from './pages/teacher/MyBookings';
 import TARoomFinder from './pages/ta/RoomFinder';
 import TAMyBookings from './pages/ta/MyBookings';
 
-import './styles/main.css';
+import api from './services/api_config';
 
 const App = () => {
     const [authenticated, setAuthenticated] = useState(false);
@@ -65,11 +65,19 @@ const App = () => {
         else setActivePage('departments');
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('user');
-        setAuthenticated(false);
-        setUser(null);
+    const handleLogout = async () => {
+        try {
+            // Tell backend to kill session
+            await api.post('/auth/logout');
+        } catch (err) {
+            console.error('Logout API failed:', err);
+        } finally {
+            // Always clear local state
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('user');
+            setAuthenticated(false);
+            setUser(null);
+        }
     };
 
     if (loading) {

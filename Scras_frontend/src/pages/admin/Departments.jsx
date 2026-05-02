@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { getDepartments, createDepartment, deleteDepartment } from '../../services/admin_service';
+import { getDepartments, createDepartment, deleteDepartment, getDashboardStats } from '../../services/admin_service';
 import SearchBar from '../../components/common/SearchBar';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ConfirmModal from '../../components/common/ConfirmModal';
@@ -19,25 +19,42 @@ const Departments = () => {
     const [selectedDept, setSelectedDept] = useState(null);
     const [newDeptName, setNewDeptName] = useState('');
     const [error, setError] = useState('');
+    const [stats, setStats] = useState({
+        total_depts: 0,
+        total_students: 0,
+        total_courses: 0,
+        total_teachers: 0
+    });
 
     useEffect(() => {
-        fetchDepartments();
+        fetchInitialData();
     }, []);
 
-    useEffect(() => {
-        filterDepartments();
-    }, [searchTerm, departments]);
+    const fetchInitialData = async () => {
+        setLoading(true);
+        await Promise.all([fetchDepartments(), fetchStats()]);
+        setLoading(false);
+    };
+
+    const fetchStats = async () => {
+        const result = await getDashboardStats();
+        if (result.success && result.data) {
+            setStats(result.data);
+        }
+    };
 
     const fetchDepartments = async () => {
-        setLoading(true);
         const result = await getDepartments();
         if (result.success) {
             setDepartments(result.data || []);
         } else {
             setError(result.message);
         }
-        setLoading(false);
     };
+
+    useEffect(() => {
+        filterDepartments();
+    }, [searchTerm, departments]);
 
     const filterDepartments = () => {
         if (!searchTerm) {
@@ -86,7 +103,7 @@ const Departments = () => {
             <div className="page-header">
                 <div className="page-title">
                     <h1>Departments</h1>
-                    <p>{departments.length} departments · {departments.length * 40} enrolled students</p>
+                    <p>{departments.length} departments · {stats.total_students} enrolled students</p>
                 </div>
             </div>
 
@@ -94,25 +111,25 @@ const Departments = () => {
                 <div className="stat-card card-peach">
                     <span className="stat-icon">🏛️</span>
                     <span className="stat-label">Total Departments</span>
-                    <span className="stat-value">{departments.length}</span>
+                    <span className="stat-value">{stats.total_depts}</span>
                     <span className="stat-subtext">Active faculties</span>
                 </div>
                 <div className="stat-card card-green">
                     <span className="stat-icon">🎓</span>
                     <span className="stat-label">Total Students</span>
-                    <span className="stat-value">1,950</span>
+                    <span className="stat-value">{stats.total_students.toLocaleString()}</span>
                     <span className="stat-subtext">Enrolled</span>
                 </div>
                 <div className="stat-card card-orange">
                     <span className="stat-icon">📚</span>
                     <span className="stat-label">Total Courses</span>
-                    <span className="stat-value">103</span>
+                    <span className="stat-value">{stats.total_courses}</span>
                     <span className="stat-subtext">Offered this semester</span>
                 </div>
                 <div className="stat-card card-pink">
                     <span className="stat-icon">👨‍🏫</span>
                     <span className="stat-label">Dept Heads</span>
-                    <span className="stat-value">{departments.length}</span>
+                    <span className="stat-value">{stats.total_teachers}</span>
                     <span className="stat-subtext">Faculty leads</span>
                 </div>
             </div>
