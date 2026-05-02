@@ -1,3 +1,73 @@
-#env files
+# =========================
+
+# ENV & CONFIG
+
+# =========================
+
 .env
+.env.local
+.env.*.local
+
+# =========================
+
+# NODE MODULES
+
+# =========================
+
 node_modules/
+
+# =========================
+
+# UPLOADS (IMPORTANT)
+
+# =========================
+
+# Ignore all uploaded files
+
+uploads/
+upload/
+src/uploads/
+src/middleware/uploads/
+
+# If your middleware stores files here
+
+src/middleware/upload/
+
+# =========================
+
+# LOGS
+
+# =========================
+
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =========================
+
+# OS FILES
+
+# =========================
+
+.DS_Store
+Thumbs.db
+
+# =========================
+
+# BUILD FILES
+
+# =========================
+
+dist/
+build/
+
+# =========================
+
+# TEMP FILES
+
+# =========================
+
+temp/
+tmp/

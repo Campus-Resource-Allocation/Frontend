@@ -1,9 +1,9 @@
 /**
  * Room Finder Page (Teacher/TA)
- * Polished to match Figma design system (lavender/pastel)
+ * With hourly time slot selection
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { getCurrentUser } from '../../services/auth_service';
 import * as teacherService from '../../services/teacher_service';
 import * as taService from '../../services/ta_service';
@@ -17,8 +17,37 @@ const typeColors = {
     "English Lab": "#EC4899",
 };
 
-function BookingModal({ room, bookingDate, onConfirm, onCancel, loading }) {
+// Generate hourly slots from 8 AM to 8 PM
+const generateTimeSlots = () => {
+    const slots = [];
+    for (let hour = 8; hour < 20; hour++) {
+        const startTime = `${hour.toString().padStart(2, '0')}:00:00`;
+        const endTime = `${(hour + 1).toString().padStart(2, '0')}:00:00`;
+        const displayStart = hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`;
+        const displayEnd = (hour + 1) === 12 ? "12:00 PM" : (hour + 1) > 12 ? `${hour + 1 - 12}:00 PM` : `${hour + 1}:00 AM`;
+        
+        slots.push({
+            id: hour,
+            startTime,
+            endTime,
+            display: `${displayStart} - ${displayEnd}`
+        });
+    }
+    return slots;
+};
+
+const TIME_SLOTS = generateTimeSlots();
+
+function BookingModal({ room, bookingDate, selectedSlots, onConfirm, onCancel, loading }) {
     const [purpose, setPurpose] = useState("");
+    
+    // Get first and last selected slot for display
+    const firstSlot = TIME_SLOTS.find(s => s.id === Math.min(...selectedSlots));
+    const lastSlot = TIME_SLOTS.find(s => s.id === Math.max(...selectedSlots));
+    
+    const timeRange = firstSlot && lastSlot 
+        ? `${firstSlot.display.split(' - ')[0]} - ${lastSlot.display.split(' - ')[1]}`
+        : '';
 
     return (
         <div style={{ position: "fixed", inset: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(15, 23, 42, 0.4)", backdropFilter: 'blur(4px)' }}>
@@ -37,9 +66,17 @@ function BookingModal({ room, bookingDate, onConfirm, onCancel, loading }) {
                     </select>
                 </div>
 
-                <div style={{ marginBottom: "32px" }}>
+                <div style={{ marginBottom: "20px" }}>
                     <label style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "#94a3b8", fontWeight: 700, letterSpacing: "0.05em" }}>SELECTED DATE</label>
                     <input type="text" value={bookingDate} readOnly style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", outline: "none", background: "#f1f5f9", border: "1px solid #e2e8f0", color: "#64748b", fontSize: "14px", fontWeight: '600' }} />
+                </div>
+
+                <div style={{ marginBottom: "32px" }}>
+                    <label style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "#94a3b8", fontWeight: 700, letterSpacing: "0.05em" }}>TIME RANGE</label>
+                    <input type="text" value={timeRange} readOnly style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", outline: "none", background: "#f1f5f9", border: "1px solid #e2e8f0", color: "#64748b", fontSize: "14px", fontWeight: '600' }} />
+                    <p style={{ fontSize: "11px", color: "#94a3b8", marginTop: "6px" }}>
+                        {selectedSlots.length} hour{selectedSlots.length > 1 ? 's' : ''} selected
+                    </p>
                 </div>
 
                 <div style={{ display: "flex", gap: "12px" }}>
@@ -59,8 +96,7 @@ export default function RoomFinder() {
 
     const [selectedType, setSelectedType] = useState("All");
     const [selectedDate, setSelectedDate] = useState("");
-    const [selectedSlot, setSelectedSlot] = useState("");
-    const [timeSlots, setTimeSlots] = useState([]);
+    const [selectedSlots, setSelectedSlots] = useState([]);
     const [rooms, setRooms] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState(false);
@@ -69,24 +105,39 @@ export default function RoomFinder() {
     const [modalRoom, setModalRoom] = useState(null);
     const [bookingLoading, setBookingLoading] = useState(false);
 
-    useEffect(() => {
-        const load = async () => {
-            const data = await service.getTimeSlots();
-            if (data?.success) setTimeSlots(data.data);
-        };
-        load();
-    }, [service]);
+    const handleSlotToggle = (slotId) => {
+        setSelectedSlots(prev => {
+            if (prev.includes(slotId)) {
+                return prev.filter(id => id !== slotId);
+            } else {
+                return [...prev, slotId].sort((a, b) => a - b);
+            }
+        });
+    };
 
     const handleSearch = async () => {
-        if (!selectedDate || !selectedSlot) {
-            setMessage({ text: "Please select a date and time slot to search", type: "error" });
+        if (!selectedDate || selectedSlots.length === 0) {
+            setMessage({ text: "Please select a date and at least one time slot", type: "error" });
             return;
         }
+        
         setLoading(true);
         setMessage({ text: "", type: "" });
-        const data = await service.searchAvailableRooms(selectedType, selectedDate, selectedSlot);
+        
+        // Get start time of first slot and end time of last slot
+        const firstSlot = TIME_SLOTS.find(s => s.id === Math.min(...selectedSlots));
+        const lastSlot = TIME_SLOTS.find(s => s.id === Math.max(...selectedSlots));
+        
+        const data = await service.searchAvailableRooms(
+            selectedType, 
+            selectedDate, 
+            firstSlot.startTime,
+            lastSlot.endTime
+        );
+        
         setLoading(false);
         setSearched(true);
+        
         if (data?.success) {
             setRooms(data.data);
             if (data.data.length === 0) {
@@ -99,9 +150,23 @@ export default function RoomFinder() {
 
     const confirmBooking = async (purpose) => {
         if (!purpose) return;
+        
         setBookingLoading(true);
-        const data = await service.bookRoom(modalRoom.room_id, selectedSlot, selectedDate, purpose);
+        
+        // Get start time of first slot and end time of last slot
+        const firstSlot = TIME_SLOTS.find(s => s.id === Math.min(...selectedSlots));
+        const lastSlot = TIME_SLOTS.find(s => s.id === Math.max(...selectedSlots));
+        
+        const data = await service.bookRoom(
+            modalRoom.room_id, 
+            selectedDate,
+            firstSlot.startTime,
+            lastSlot.endTime,
+            purpose
+        );
+        
         setBookingLoading(false);
+        
         if (data?.success) {
             setBookedIds((prev) => [...prev, modalRoom.room_id]);
             setMessage({ text: "Success! Your booking request is now pending admin approval.", type: "success" });
@@ -135,38 +200,64 @@ export default function RoomFinder() {
             {/* Filter Bar */}
             <div style={{ 
                 background: "white", border: "1px solid #e2e8f0", borderRadius: "20px", 
-                padding: "24px", display: "grid", gridTemplateColumns: "1fr 1fr 1fr auto", 
-                gap: "20px", marginBottom: "32px", alignItems: "end",
+                padding: "24px", marginBottom: "24px",
                 boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
             }}>
-                <div>
-                    <label style={{ display: "block", marginBottom: "8px", fontSize: "11px", color: "#94a3b8", fontWeight: 800, letterSpacing: "0.05em" }}>ROOM TYPE</label>
-                    <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} style={{ width: "100%", padding: "12px 14px", borderRadius: "12px", outline: "none", background: "#f8fafc", border: "1px solid #e2e8f0", color: "#1e293b", fontSize: "13px", fontWeight: '600' }}>
-                        <option value="All">All Types</option>
-                        <option value="Class Room">Class Room</option>
-                        <option value="Computer Lab">Computer Lab</option>
-                        <option value="Seminar Hall">Seminar Hall</option>
-                        <option value="Robotics Lab">Robotics Lab</option>
-                        <option value="Electrical lab">Electrical lab</option>
-                        <option value="English Lab">English Lab</option>
-                    </select>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: "20px", marginBottom: "20px", alignItems: "end" }}>
+                    <div>
+                        <label style={{ display: "block", marginBottom: "8px", fontSize: "11px", color: "#94a3b8", fontWeight: 800, letterSpacing: "0.05em" }}>ROOM TYPE</label>
+                        <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} style={{ width: "100%", padding: "12px 14px", borderRadius: "12px", outline: "none", background: "#f8fafc", border: "1px solid #e2e8f0", color: "#1e293b", fontSize: "13px", fontWeight: '600' }}>
+                            <option value="All">All Types</option>
+                            <option value="Class Room">Class Room</option>
+                            <option value="Computer Lab">Computer Lab</option>
+                            <option value="Seminar Hall">Seminar Hall</option>
+                            <option value="Robotics Lab">Robotics Lab</option>
+                            <option value="Electrical lab">Electrical lab</option>
+                            <option value="English Lab">English Lab</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style={{ display: "block", marginBottom: "8px", fontSize: "11px", color: "#94a3b8", fontWeight: 800, letterSpacing: "0.05em" }}>BOOKING DATE</label>
+                        <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} style={{ width: "100%", padding: "12px 14px", borderRadius: "12px", outline: "none", background: "#f8fafc", border: "1px solid #e2e8f0", color: "#1e293b", fontSize: "13px", fontWeight: '600' }} />
+                    </div>
+                    <button onClick={handleSearch} style={{ padding: "12px 28px", borderRadius: "12px", background: "#7c3aed", color: "#fff", fontSize: "14px", fontWeight: 700, border: "none", cursor: "pointer", height: '44px', transition: 'all 0.2s' }}>
+                        Find Rooms
+                    </button>
                 </div>
+
+                {/* Time Slots Selection */}
                 <div>
-                    <label style={{ display: "block", marginBottom: "8px", fontSize: "11px", color: "#94a3b8", fontWeight: 800, letterSpacing: "0.05em" }}>BOOKING DATE</label>
-                    <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} style={{ width: "100%", padding: "12px 14px", borderRadius: "12px", outline: "none", background: "#f8fafc", border: "1px solid #e2e8f0", color: "#1e293b", fontSize: "13px", fontWeight: '600' }} />
+                    <label style={{ display: "block", marginBottom: "12px", fontSize: "11px", color: "#94a3b8", fontWeight: 800, letterSpacing: "0.05em" }}>
+                        SELECT TIME SLOTS {selectedSlots.length > 0 && `(${selectedSlots.length} selected)`}
+                    </label>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "12px" }}>
+                        {TIME_SLOTS.map((slot) => {
+                            const isSelected = selectedSlots.includes(slot.id);
+                            return (
+                                <label key={slot.id} style={{ 
+                                    display: "flex", alignItems: "center", gap: "10px", 
+                                    padding: "10px 14px", borderRadius: "10px", 
+                                    background: isSelected ? "#f3e8ff" : "#f8fafc", 
+                                    border: `1.5px solid ${isSelected ? "#7c3aed" : "#e2e8f0"}`,
+                                    cursor: "pointer", transition: 'all 0.2s',
+                                    userSelect: 'none'
+                                }}
+                                onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.borderColor = "#cbd5e1"; }}
+                                onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.borderColor = "#e2e8f0"; }}>
+                                    <input 
+                                        type="checkbox" 
+                                        checked={isSelected}
+                                        onChange={() => handleSlotToggle(slot.id)}
+                                        style={{ width: "16px", height: "16px", cursor: "pointer", accentColor: "#7c3aed" }}
+                                    />
+                                    <span style={{ fontSize: "13px", fontWeight: 600, color: isSelected ? "#7c3aed" : "#475569" }}>
+                                        {slot.display}
+                                    </span>
+                                </label>
+                            );
+                        })}
+                    </div>
                 </div>
-                <div>
-                    <label style={{ display: "block", marginBottom: "8px", fontSize: "11px", color: "#94a3b8", fontWeight: 800, letterSpacing: "0.05em" }}>TIME SLOT</label>
-                    <select value={selectedSlot} onChange={(e) => setSelectedSlot(e.target.value)} style={{ width: "100%", padding: "12px 14px", borderRadius: "12px", outline: "none", background: "#f8fafc", border: "1px solid #e2e8f0", color: "#1e293b", fontSize: "13px", fontWeight: '600' }}>
-                        <option value="">Choose slot...</option>
-                        {timeSlots.map((slot) => (
-                            <option key={slot.slot_id} value={slot.slot_id}>{slot.day} · {slot.start_time} - {slot.end_time}</option>
-                        ))}
-                    </select>
-                </div>
-                <button onClick={handleSearch} style={{ padding: "12px 28px", borderRadius: "12px", background: "#7c3aed", color: "#fff", fontSize: "14px", fontWeight: 700, border: "none", cursor: "pointer", height: '44px', transition: 'all 0.2s' }}>
-                    Find Rooms
-                </button>
             </div>
 
             {loading && (
@@ -236,7 +327,7 @@ export default function RoomFinder() {
                                             fontSize: "14px", fontWeight: 700, border: "1px solid #ddd6fe", 
                                             cursor: "pointer", transition: 'all 0.2s'
                                         }}
-                                        onMouseEnter={(e) => { e.currentTarget.style.background = "#7c3aed"; e.currentTarget.style.color = "#white"; }}
+                                        onMouseEnter={(e) => { e.currentTarget.style.background = "#7c3aed"; e.currentTarget.style.color = "white"; }}
                                         onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.color = "#7c3aed"; }}>
                                             Book This Room
                                         </button>
@@ -257,7 +348,14 @@ export default function RoomFinder() {
             )}
 
             {modalRoom && (
-                <BookingModal room={modalRoom} bookingDate={selectedDate} onConfirm={confirmBooking} onCancel={() => setModalRoom(null)} loading={bookingLoading} />
+                <BookingModal 
+                    room={modalRoom} 
+                    bookingDate={selectedDate}
+                    selectedSlots={selectedSlots}
+                    onConfirm={confirmBooking} 
+                    onCancel={() => setModalRoom(null)} 
+                    loading={bookingLoading} 
+                />
             )}
             
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>

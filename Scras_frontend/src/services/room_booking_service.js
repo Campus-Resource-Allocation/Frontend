@@ -11,6 +11,12 @@
 import api from './api_config';
 import { getUserRole, getUserId } from './auth_service';
 
+// 🔥 ONE BASE PATH HANDLER
+const getBasePath = () => {
+    const role = getUserRole()?.toLowerCase();
+    return role === 'teacher' ? '/teacher' : '/ta';
+};
+
 // Helper to get role-specific base path
 const getRoleBasePath = () => {
     const role = getUserRole();
@@ -75,21 +81,26 @@ export const bookRoom = async (bookingData) => {
  */
 export const getMyBookings = async () => {
     try {
-        const basePath = getRoleBasePath();
+        const basePath = getBasePath();
+
         const response = await api.get(`${basePath}/my-bookings`);
+
+        console.log("Bookings:", response.data); // DEBUG
+
         return {
             success: true,
             data: response.data
         };
+
     } catch (error) {
-        console.error('Get my bookings error:', error);
+        console.error(error);
         return {
             success: false,
-            message: error.response?.data?.error || 'Failed to fetch bookings',
             data: []
         };
     }
 };
+
 
 // ==================== TEACHER SCHEDULE ====================
 
