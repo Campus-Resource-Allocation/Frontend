@@ -6,8 +6,26 @@ export const login = async (email, password) => {
 
         if (response.data?.success && response.data?.data) {
             const { token, user } = response.data.data;
+            
+            // ✅ Save to localStorage
             localStorage.setItem('access_token', token);
             localStorage.setItem('user', JSON.stringify(user));
+            
+            // ✅ REDIRECT LOGIC
+            const dashboardRoutes = {
+                'Admin': '/admin/dashboard',
+                'Teacher': '/teacher/dashboard',
+                'Student': '/student/dashboard',
+                'TA': '/ta/dashboard'
+            };
+
+            const route = dashboardRoutes[user.role] || '/admin/dashboard';
+            
+            console.log('Redirecting to:', route);  // Debug
+            
+            // ✅ Force redirect
+            window.location.href = route;
+            
             return { success: true, token, user };
         }
         

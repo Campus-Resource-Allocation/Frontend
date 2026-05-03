@@ -9,14 +9,6 @@ const Login = ({ onLoginSuccess }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    // Demo credentials for each role
-    const roleCredentials = {
-        admin:   { email: 'admin@resora.com',        password: '12345678' },
-        teacher: { email: 'hina.i@university.edu',   password: '12345678' },
-        ta:      { email: 'ta.sana@nu.edu.pk',        password: '12345678' },
-        student: { email: '24l0601@lhr.nu.edu.pk',   password: '12345678' }
-    };
-
     const roles = [
         {
             id: 'admin',
@@ -71,9 +63,6 @@ const Login = ({ onLoginSuccess }) => {
 
     const handleRoleSelect = (roleId) => {
         setSelectedRole(roleId);
-        const creds = roleCredentials[roleId];
-        setUsername(creds.email);
-        setPassword(creds.password);
         setError('');
     };
 
@@ -100,7 +89,6 @@ const Login = ({ onLoginSuccess }) => {
     return (
         <div className="login-container">
             <div className="login-card">
-                {/* Left Side - Branding */}
                 <div className="login-brand">
                     <div className="logo">
                         <span style={{
@@ -148,13 +136,11 @@ const Login = ({ onLoginSuccess }) => {
                     </div>
                 </div>
 
-                {/* Right Side - Login Form */}
                 <div className="login-form-container">
                     <div className="form-wrapper">
                         <h2>Sign in to your portal</h2>
                         <p className="form-subtitle">Select your role and enter your credentials</p>
 
-                        {/* Role Selection - 2x2 Grid */}
                         <p style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', letterSpacing: '0.08em', marginBottom: '12px' }}>SELECT ROLE</p>
                         <div className="role-selector">
                             {roles.map(role => (
@@ -189,7 +175,6 @@ const Login = ({ onLoginSuccess }) => {
                             ))}
                         </div>
 
-                        {/* Login Form */}
                         <form onSubmit={handleSubmit}>
                             <div className="input-group">
                                 <label>USERNAME</label>

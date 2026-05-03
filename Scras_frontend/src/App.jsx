@@ -58,21 +58,21 @@ const App = () => {
         setAuthenticated(true);
         setUser(userData);
 
-        // Redirect on login
+        // Set active page based on role
         const role = userData?.role?.toLowerCase();
         if (role === 'student') setActivePage('timetable');
         else if (role === 'teacher' || role === 'ta') setActivePage('my-schedule');
         else setActivePage('departments');
+        
+        setLoading(false);
     };
 
     const handleLogout = async () => {
         try {
-            // Tell backend to kill session
             await api.post('/auth/logout');
         } catch (err) {
             console.error('Logout API failed:', err);
         } finally {
-            // Always clear local state
             localStorage.removeItem('access_token');
             localStorage.removeItem('user');
             setAuthenticated(false);
@@ -115,7 +115,7 @@ const App = () => {
 
         if (userRole === 'teacher') {
             switch (activePage) {
-                case 'my-schedule': return <MyBookings onPageChange={setActivePage} />; // Reusing MyBookings as schedule/bookings manager
+                case 'my-schedule': return <MyBookings onPageChange={setActivePage} />;
                 case 'room-finder': return <RoomFinder />;
                 default: return <MyBookings onPageChange={setActivePage} />;
             }
