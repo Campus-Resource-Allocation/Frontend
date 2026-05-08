@@ -1,0 +1,147 @@
+.container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-page);
+    position: relative;
+    padding: 20px;
+}
+
+.themeToggle {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.themeToggle:hover {
+    transform: scale(1.1);
+    border-color: var(--admin-accent);
+}
+
+.glassCard {
+    width: 100%;
+    max-width: 420px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 48px 40px;
+    border-radius: 32px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(12px);
+}
+
+.logoWrapper {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.logo {
+    background: var(--admin-accent);
+    border-radius: 12px;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
+}
+
+.glassCard h2 {
+    font-size: 28px;
+    font-weight: 800;
+    text-align: center;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 40px;
+}
+
+.inputGroup {
+    margin-bottom: 24px;
+}
+
+.inputGroup label {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    letter-spacing: 0.05em;
+}
+
+.inputGroup input {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--bg-page);
+    border: 1.5px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.inputGroup input:focus {
+    border-color: var(--admin-accent);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+}
+
+.errorMessage {
+    color: #ef4444;
+    font-size: 13px;
+    margin-bottom: 16px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.submitBtn {
+    width: 100%;
+    padding: 16px;
+    background: var(--admin-accent);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3);
+}
+
+.submitBtn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 25px -5px rgba(124, 58, 237, 0.4);
+}
+
+.submitBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.footer {
+    margin-top: 32px;
+    text-align: center;
+    font-size: 12px;
+    opacity: 0.6;
+    color: var(--text-muted);
+}

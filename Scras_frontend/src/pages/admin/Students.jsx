@@ -4,12 +4,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { getStudents, createStudent, deleteStudent } from '../../services/admin_service';
-import { getDepartments } from '../../services/admin_service';
-import SearchBar from '../../components/common/SearchBar';
-import StatusBadge from '../../components/common/StatusBadge';
+import { getStudents, createStudent, deleteStudent, getDepartments } from '../../services/admin_service';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ConfirmModal from '../../components/common/ConfirmModal';
+import styles from './Students.module.css';
 
 const Students = () => {
     const [students, setStudents] = useState([]);
@@ -46,12 +44,8 @@ const Students = () => {
             getDepartments()
         ]);
 
-        if (studentsRes.success) {
-            setStudents(studentsRes.data || []);
-        }
-        if (deptsRes.success) {
-            setDepartments(deptsRes.data || []);
-        }
+        if (studentsRes.success) setStudents(studentsRes.data || []);
+        if (deptsRes.success) setDepartments(deptsRes.data || []);
         setLoading(false);
     };
 
@@ -69,14 +63,11 @@ const Students = () => {
     };
 
     const handleAddStudent = async () => {
-        console.log("📤 Form data before validation:", formData);
-
         if (!formData.name || !formData.email || !formData.department_id || !formData.roll_number || !formData.password || !formData.semester) {
             setError('All fields are required');
             return;
         }
 
-        // ✅ Ensure all numeric fields are integers
         const dataToSend = {
             name: formData.name,
             email: formData.email,
@@ -87,12 +78,7 @@ const Students = () => {
             department_id: parseInt(formData.department_id)
         };
 
-        console.log("📤 Data being sent to backend:", dataToSend);
-
         const result = await createStudent(dataToSend);
-        
-        console.log("📬 Response from backend:", result);
-
         if (result.success) {
             setShowAddModal(false);
             setFormData({
@@ -113,7 +99,6 @@ const Students = () => {
 
     const handleDeleteStudent = async () => {
         if (!selectedStudent) return;
-
         const result = await deleteStudent(selectedStudent.student_id);
         if (result.success) {
             setShowDeleteModal(false);
@@ -129,63 +114,68 @@ const Students = () => {
     const currentYear = new Date().getFullYear();
     const years = [currentYear - 3, currentYear - 2, currentYear - 1, currentYear];
 
+    const firstYearCount = students.filter(s => parseInt(s.semester || 1) <= 2).length;
+    const secondYearCount = students.filter(s => parseInt(s.semester || 1) > 2 && parseInt(s.semester || 1) <= 4).length;
+    const thirdYearCount = students.filter(s => parseInt(s.semester || 1) > 4 && parseInt(s.semester || 1) <= 6).length;
+    const fourthYearCount = students.filter(s => parseInt(s.semester || 1) > 6).length;
+
     return (
-        <div className="students-page">
-            <div className="page-header">
-                <div className="page-title">
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <div className={styles.title}>
                     <h1>Students</h1>
                     <p>{students.length} enrolled students</p>
                 </div>
-                <button className="btn-primary" onClick={() => setShowAddModal(true)}>
-                    + Add Student
-                </button>
+                <button onClick={() => setShowAddModal(true)} style={{
+                    padding: '10px 20px', borderRadius: '12px', background: 'var(--admin-accent)', color: 'white', border: 'none', fontWeight: '700', cursor: 'pointer'
+                }}>+ Add Student</button>
             </div>
 
-            <div className="stats-grid">
-                <div className="stat-card card-green" style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '24px'}}>
-                    <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
-                        <div style={{background: 'var(--card-bg)', padding: '8px', borderRadius: '8px', color: '#10b981'}}>🎓</div>
+            <div className={styles.statsGrid}>
+                <div className={styles.statCard}>
+                    <div className={styles.statContent}>
+                        <div className={styles.iconWrapper} style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>🎓</div>
                         <div>
-                            <div className="stat-value" style={{fontSize: '24px', marginBottom: '0'}}>1</div>
-                            <div className="stat-label" style={{margin: '0'}}>1st Year</div>
+                            <div className={styles.statValue}>{firstYearCount}</div>
+                            <div className={styles.statLabel}>1st Year</div>
                         </div>
                     </div>
                 </div>
-                <div className="stat-card card-peach" style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '24px'}}>
-                    <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
-                        <div style={{background: 'var(--card-bg)', padding: '8px', borderRadius: '8px', color: '#3b82f6'}}>🎓</div>
+                <div className={styles.statCard}>
+                    <div className={styles.statContent}>
+                        <div className={styles.iconWrapper} style={{ background: 'rgba(14, 165, 233, 0.1)', color: '#0ea5e9' }}>🎓</div>
                         <div>
-                            <div className="stat-value" style={{fontSize: '24px', marginBottom: '0'}}>1</div>
-                            <div className="stat-label" style={{margin: '0'}}>2nd Year</div>
+                            <div className={styles.statValue}>{secondYearCount}</div>
+                            <div className={styles.statLabel}>2nd Year</div>
                         </div>
                     </div>
                 </div>
-                <div className="stat-card card-orange" style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '24px'}}>
-                    <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
-                        <div style={{background: 'var(--card-bg)', padding: '8px', borderRadius: '8px', color: '#f59e0b'}}>🎓</div>
+                <div className={styles.statCard}>
+                    <div className={styles.statContent}>
+                        <div className={styles.iconWrapper} style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b' }}>🎓</div>
                         <div>
-                            <div className="stat-value" style={{fontSize: '24px', marginBottom: '0'}}>2</div>
-                            <div className="stat-label" style={{margin: '0'}}>3rd Year</div>
+                            <div className={styles.statValue}>{thirdYearCount}</div>
+                            <div className={styles.statLabel}>3rd Year</div>
                         </div>
                     </div>
                 </div>
-                <div className="stat-card card-pink" style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '24px'}}>
-                    <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
-                        <div style={{background: 'var(--card-bg)', padding: '8px', borderRadius: '8px', color: '#ec4899'}}>🎓</div>
+                <div className={styles.statCard}>
+                    <div className={styles.statContent}>
+                        <div className={styles.iconWrapper} style={{ background: 'rgba(236, 72, 153, 0.1)', color: '#ec4899' }}>🎓</div>
                         <div>
-                            <div className="stat-value" style={{fontSize: '24px', marginBottom: '0'}}>1</div>
-                            <div className="stat-label" style={{margin: '0'}}>4th Year</div>
+                            <div className={styles.statValue}>{fourthYearCount}</div>
+                            <div className={styles.statLabel}>4th Year</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {error && <div className="error-message">{error}</div>}
+            {error && <div className={styles.errorMessage}>{error}</div>}
 
-            <div className="table-container">
-                <div className="table-header-actions">
-                    <div className="search-input-wrapper">
-                        <span className="search-icon">🔍</span>
+            <div className={styles.tableContainer}>
+                <div className={styles.tableHeaderActions}>
+                    <div className={styles.searchInputWrapper}>
+                        <span className={styles.searchIcon}>🔍</span>
                         <input
                             type="text"
                             placeholder="Search students..."
@@ -193,10 +183,10 @@ const Students = () => {
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <span className="results-count">{filteredStudents.length} of {students.length} results</span>
+                    <span className={styles.resultsCount}>{filteredStudents.length} of {students.length} results</span>
                 </div>
 
-                <table className="data-table">
+                <table className={styles.dataTable}>
                     <thead>
                         <tr>
                             <th>STUDENT</th>
@@ -213,7 +203,6 @@ const Students = () => {
                             const color = colors[index % colors.length];
                             const initials = student.name ? student.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase() : 'ST';
                             
-                            // Mocking year based on batch year
                             const yearDiff = new Date().getFullYear() - student.batch_year;
                             const displayYear = yearDiff === 0 ? '1st Year' : yearDiff === 1 ? '2nd Year' : yearDiff === 2 ? '3rd Year' : '4th Year';
                             const yearColor = yearDiff === 0 ? 'green' : yearDiff === 1 ? 'blue' : yearDiff === 2 ? 'orange' : 'pink';
@@ -221,27 +210,19 @@ const Students = () => {
                             return (
                                 <tr key={student.student_id}>
                                     <td>
-                                        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
-                                            <div style={{width: '32px', height: '32px', borderRadius: '50%', background: `var(--card-${color})`, color: `var(--text-${color}-dark, #333)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold'}}>
+                                        <div className={styles.studentCell}>
+                                            <div className={styles.avatar} style={{ background: `var(--card-${color})`, color: `var(--text-${color}-dark)` }}>
                                                 {initials}
                                             </div>
                                             <strong>{student.name}</strong>
                                         </div>
                                     </td>
                                     <td>{student.roll_number}</td>
-                                    <td><span className={`badge badge-${color}`}>{student.department_name || 'N/A'}</span></td>
-                                    <td><span className={`badge badge-${yearColor}`}>{displayYear}</span></td>
-                                    <td><span style={{color: '#64748b'}}>✉️ {student.email}</span></td>
+                                    <td><span className={styles.badge} style={{ background: `var(--card-${color})`, color: `var(--text-${color}-dark)` }}>{student.department_name || 'N/A'}</span></td>
+                                    <td><span className={styles.badge} style={{ background: `var(--card-${yearColor})`, color: `var(--text-${yearColor}-dark)` }}>{displayYear}</span></td>
+                                    <td><span className={styles.emailText}>✉️ {student.email}</span></td>
                                     <td>
-                                        <button
-                                            className="btn-icon btn-danger"
-                                            onClick={() => {
-                                                setSelectedStudent(student);
-                                                setShowDeleteModal(true);
-                                            }}
-                                        >
-                                            🗑️
-                                        </button>
+                                        <button onClick={() => { setSelectedStudent(student); setShowDeleteModal(true); }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontWeight: '600' }}>Delete</button>
                                     </td>
                                 </tr>
                             );
@@ -250,19 +231,15 @@ const Students = () => {
                 </table>
             </div>
 
-            {/* Add Student Modal */}
             <ConfirmModal
                 isOpen={showAddModal}
-                onClose={() => {
-                    setShowAddModal(false);
-                    setError('');
-                }}
+                onClose={() => { setShowAddModal(false); setError(''); }}
                 onConfirm={handleAddStudent}
                 title="Add Student"
                 message={
-                    <div className="modal-form">
-                        <div className="form-row">
-                            <div className="form-group">
+                    <div className={styles.modalForm}>
+                        <div className={styles.formRow}>
+                            <div className={styles.formGroup}>
                                 <label>Roll Number:</label>
                                 <input
                                     type="text"
@@ -271,7 +248,7 @@ const Students = () => {
                                     placeholder="24L-0608"
                                 />
                             </div>
-                            <div className="form-group">
+                            <div className={styles.formGroup}>
                                 <label>Name:</label>
                                 <input
                                     type="text"
@@ -281,8 +258,8 @@ const Students = () => {
                                 />
                             </div>
                         </div>
-                        <div className="form-row">
-                            <div className="form-group">
+                        <div className={styles.formRow}>
+                            <div className={styles.formGroup}>
                                 <label>Email:</label>
                                 <input
                                     type="email"
@@ -291,7 +268,7 @@ const Students = () => {
                                     placeholder="l240608@lhr.nu.edu.pk"
                                 />
                             </div>
-                            <div className="form-group">
+                            <div className={styles.formGroup}>
                                 <label>Password:</label>
                                 <input
                                     type="password"
@@ -301,8 +278,8 @@ const Students = () => {
                                 />
                             </div>
                         </div>
-                        <div className="form-row">
-                            <div className="form-group">
+                        <div className={styles.formRow}>
+                            <div className={styles.formGroup}>
                                 <label>Department:</label>
                                 <select
                                     value={formData.department_id}
@@ -317,8 +294,8 @@ const Students = () => {
                                 </select>
                             </div>
                         </div>
-                        <div className="form-row">
-                            <div className="form-group">
+                        <div className={styles.formRow}>
+                            <div className={styles.formGroup}>
                                 <label>Batch Year:</label>
                                 <select
                                     value={formData.batch_year}
@@ -329,21 +306,16 @@ const Students = () => {
                                     ))}
                                 </select>
                             </div>
-                            <div className="form-group">
+                            <div className={styles.formGroup}>
                                 <label>Semester:</label>
                                 <select
                                     value={formData.semester}
                                     onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
                                 >
                                     <option value="">Select Semester</option>
-                                    <option value="1">Semester 1</option>
-                                    <option value="2">Semester 2</option>
-                                    <option value="3">Semester 3</option>
-                                    <option value="4">Semester 4</option>
-                                    <option value="5">Semester 5</option>
-                                    <option value="6">Semester 6</option>
-                                    <option value="7">Semester 7</option>
-                                    <option value="8">Semester 8</option>
+                                    {[1,2,3,4,5,6,7,8].map(s => (
+                                        <option key={s} value={s}>Semester {s}</option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
@@ -353,7 +325,6 @@ const Students = () => {
                 confirmVariant="primary"
             />
 
-            {/* Delete Modal */}
             <ConfirmModal
                 isOpen={showDeleteModal}
                 onClose={() => setShowDeleteModal(false)}

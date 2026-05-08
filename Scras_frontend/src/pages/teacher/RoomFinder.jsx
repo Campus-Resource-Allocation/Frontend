@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { getCurrentUser } from '../../services/auth_service';
 import * as teacherService from '../../services/teacher_service';
 import * as taService from '../../services/ta_service';
+import styles from './RoomFinder.module.css';
 
 const typeColors = {
     "Class Room": "#6366F1",
@@ -50,14 +51,14 @@ function BookingModal({ room, bookingDate, selectedSlots, onConfirm, onCancel, l
         : '';
 
     return (
-        <div style={{ position: "fixed", inset: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(15, 23, 42, 0.4)", backdropFilter: 'blur(4px)' }}>
-            <div style={{ width: "100%", maxWidth: "420px", background: "white", borderRadius: "24px", padding: "32px", boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)' }}>
-                <h3 style={{ fontSize: "20px", fontWeight: 800, color: "#1e293b", marginBottom: "8px" }}>Reserve Room {room.room_number}</h3>
-                <p style={{ fontSize: "14px", color: "#64748b", marginBottom: "24px" }}>{room.building} · Capacity: {room.capacity}</p>
+        <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+                <h3 className={styles.modalTitle}>Reserve Room {room.room_number}</h3>
+                <p className={styles.modalSub}>{room.building} · Capacity: {room.capacity}</p>
                 
                 <div style={{ marginBottom: "20px" }}>
-                    <label style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "#94a3b8", fontWeight: 700, letterSpacing: "0.05em" }}>PURPOSE OF BOOKING</label>
-                    <select value={purpose} onChange={(e) => setPurpose(e.target.value)} style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", outline: "none", background: "#f8fafc", border: "1px solid #e2e8f0", color: "#1e293b", fontSize: "14px", fontWeight: '500' }}>
+                    <label className={styles.filterLabel}>PURPOSE OF BOOKING</label>
+                    <select value={purpose} onChange={(e) => setPurpose(e.target.value)} className={styles.select}>
                         <option value="">Select purpose...</option>
                         <option value="Makeup Class">Makeup Class</option>
                         <option value="Assignment Evaluation">Assignment Evaluation</option>
@@ -67,21 +68,26 @@ function BookingModal({ room, bookingDate, selectedSlots, onConfirm, onCancel, l
                 </div>
 
                 <div style={{ marginBottom: "20px" }}>
-                    <label style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "#94a3b8", fontWeight: 700, letterSpacing: "0.05em" }}>SELECTED DATE</label>
-                    <input type="text" value={bookingDate} readOnly style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", outline: "none", background: "#f1f5f9", border: "1px solid #e2e8f0", color: "#64748b", fontSize: "14px", fontWeight: '600' }} />
+                    <label className={styles.filterLabel}>SELECTED DATE</label>
+                    <input type="text" value={bookingDate} readOnly className={styles.input} style={{ background: 'var(--bg-page)', opacity: 0.7 }} />
                 </div>
 
                 <div style={{ marginBottom: "32px" }}>
-                    <label style={{ display: "block", marginBottom: "8px", fontSize: "12px", color: "#94a3b8", fontWeight: 700, letterSpacing: "0.05em" }}>TIME RANGE</label>
-                    <input type="text" value={timeRange} readOnly style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", outline: "none", background: "#f1f5f9", border: "1px solid #e2e8f0", color: "#64748b", fontSize: "14px", fontWeight: '600' }} />
-                    <p style={{ fontSize: "11px", color: "#94a3b8", marginTop: "6px" }}>
+                    <label className={styles.filterLabel}>TIME RANGE</label>
+                    <input type="text" value={timeRange} readOnly className={styles.input} style={{ background: 'var(--bg-page)', opacity: 0.7 }} />
+                    <p style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "6px" }}>
                         {selectedSlots.length} hour{selectedSlots.length > 1 ? 's' : ''} selected
                     </p>
                 </div>
 
                 <div style={{ display: "flex", gap: "12px" }}>
-                    <button onClick={onCancel} style={{ flex: 1, padding: "12px", borderRadius: "12px", background: "#f1f5f9", color: "#64748b", fontSize: "14px", fontWeight: 700, border: "none", cursor: "pointer" }}>Cancel</button>
-                    <button onClick={() => onConfirm(purpose)} disabled={loading || !purpose} style={{ flex: 1, padding: "12px", borderRadius: "12px", background: purpose ? "#7c3aed" : "#ddd6fe", color: "#fff", fontSize: "14px", fontWeight: 700, border: "none", cursor: purpose ? "pointer" : "not-allowed", transition: 'all 0.2s' }}>
+                    <button onClick={onCancel} className={styles.browseBtn} style={{ flex: 1 }}>Cancel</button>
+                    <button 
+                        onClick={() => onConfirm(purpose)} 
+                        disabled={loading || !purpose} 
+                        className={styles.searchBtn}
+                        style={{ flex: 1, opacity: !purpose ? 0.5 : 1 }}
+                    >
                         {loading ? "Processing..." : "Confirm Booking"}
                     </button>
                 </div>
@@ -177,36 +183,25 @@ export default function RoomFinder() {
     };
 
     return (
-        <div style={{ padding: "0" }}>
-            <div style={{ marginBottom: "32px" }}>
-                <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b', marginBottom: '8px' }}>Room Finder</h1>
-                <p style={{ color: '#64748b', fontSize: '14px' }}>Find and reserve available space for your academic sessions</p>
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <h1>Room Finder</h1>
+                <p>Find and reserve available space for your academic sessions</p>
             </div>
 
             {message.text && (
-                <div style={{ 
-                    padding: "14px 20px", borderRadius: "12px", marginBottom: "24px", 
-                    background: message.type === "success" ? "#f0fdf4" : "#fef2f2", 
-                    border: `1px solid ${message.type === "success" ? "#dcfce7" : "#fecaca"}`, 
-                    color: message.type === "success" ? "#15803d" : "#b91c1c", 
-                    fontSize: "14px", fontWeight: 600,
-                    display: 'flex', alignItems: 'center', gap: '10px'
-                }}>
+                <div className={`${styles.alert} ${message.type === 'success' ? styles.alertSuccess : styles.alertError}`}>
                     <span>{message.type === 'success' ? '✓' : '⚠'}</span>
                     {message.text}
                 </div>
             )}
 
             {/* Filter Bar */}
-            <div style={{ 
-                background: "var(--card-bg)", border: "1px solid #e2e8f0", borderRadius: "20px", 
-                padding: "24px", marginBottom: "24px",
-                boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
-            }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: "20px", marginBottom: "20px", alignItems: "end" }}>
+            <div className={styles.filterCard}>
+                <div className={styles.filterGrid}>
                     <div>
-                        <label style={{ display: "block", marginBottom: "8px", fontSize: "11px", color: "#94a3b8", fontWeight: 800, letterSpacing: "0.05em" }}>ROOM TYPE</label>
-                        <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} style={{ width: "100%", padding: "12px 14px", borderRadius: "12px", outline: "none", background: "#f8fafc", border: "1px solid #e2e8f0", color: "#1e293b", fontSize: "13px", fontWeight: '600' }}>
+                        <label className={styles.filterLabel}>ROOM TYPE</label>
+                        <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} className={styles.select}>
                             <option value="All">All Types</option>
                             <option value="Class Room">Class Room</option>
                             <option value="Computer Lab">Computer Lab</option>
@@ -217,40 +212,31 @@ export default function RoomFinder() {
                         </select>
                     </div>
                     <div>
-                        <label style={{ display: "block", marginBottom: "8px", fontSize: "11px", color: "#94a3b8", fontWeight: 800, letterSpacing: "0.05em" }}>BOOKING DATE</label>
-                        <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} style={{ width: "100%", padding: "12px 14px", borderRadius: "12px", outline: "none", background: "#f8fafc", border: "1px solid #e2e8f0", color: "#1e293b", fontSize: "13px", fontWeight: '600' }} />
+                        <label className={styles.filterLabel}>BOOKING DATE</label>
+                        <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className={styles.input} />
                     </div>
-                    <button onClick={handleSearch} style={{ padding: "12px 28px", borderRadius: "12px", background: "#7c3aed", color: "#fff", fontSize: "14px", fontWeight: 700, border: "none", cursor: "pointer", height: '44px', transition: 'all 0.2s' }}>
+                    <button onClick={handleSearch} className={styles.searchBtn}>
                         Find Rooms
                     </button>
                 </div>
 
                 {/* Time Slots Selection */}
                 <div>
-                    <label style={{ display: "block", marginBottom: "12px", fontSize: "11px", color: "#94a3b8", fontWeight: 800, letterSpacing: "0.05em" }}>
+                    <label className={styles.filterLabel}>
                         SELECT TIME SLOTS {selectedSlots.length > 0 && `(${selectedSlots.length} selected)`}
                     </label>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "12px" }}>
+                    <div className={styles.slotsGrid}>
                         {TIME_SLOTS.map((slot) => {
                             const isSelected = selectedSlots.includes(slot.id);
                             return (
-                                <label key={slot.id} style={{ 
-                                    display: "flex", alignItems: "center", gap: "10px", 
-                                    padding: "10px 14px", borderRadius: "10px", 
-                                    background: isSelected ? "#f3e8ff" : "#f8fafc", 
-                                    border: `1.5px solid ${isSelected ? "#7c3aed" : "#e2e8f0"}`,
-                                    cursor: "pointer", transition: 'all 0.2s',
-                                    userSelect: 'none'
-                                }}
-                                onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.borderColor = "#cbd5e1"; }}
-                                onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.borderColor = "#e2e8f0"; }}>
+                                <label key={slot.id} className={`${styles.slotLabel} ${isSelected ? styles.slotLabelActive : ''}`}>
                                     <input 
                                         type="checkbox" 
                                         checked={isSelected}
                                         onChange={() => handleSlotToggle(slot.id)}
                                         style={{ width: "16px", height: "16px", cursor: "pointer", accentColor: "#7c3aed" }}
                                     />
-                                    <span style={{ fontSize: "13px", fontWeight: 600, color: isSelected ? "#7c3aed" : "#475569" }}>
+                                    <span className={`${styles.slotLabelText} ${isSelected ? styles.slotLabelTextActive : ''}`}>
                                         {slot.display}
                                     </span>
                                 </label>
@@ -262,73 +248,47 @@ export default function RoomFinder() {
 
             {loading && (
                 <div style={{ textAlign: "center", padding: "60px 0" }}>
-                    <div style={{ width: '32px', height: '32px', border: '3px solid #f1f5f9', borderTopColor: '#7c3aed', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }}></div>
-                    <p style={{ color: "#64748b", fontSize: "14px" }}>Checking room availability...</p>
+                    <div className={styles.spinner}></div>
+                    <p style={{ color: "var(--text-muted)", fontSize: "14px" }}>Checking room availability...</p>
                 </div>
             )}
 
             {!loading && rooms.length > 0 && (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "24px" }}>
+                <div className={styles.roomsGrid}>
                     {rooms.map((room) => {
                         const isBooked = bookedIds.includes(room.room_id);
                         const tc = typeColors[room.room_type] || "#8b5cf6";
                         return (
-                            <div key={room.room_id} style={{ 
-                                background: "var(--card-bg)", border: `1px solid ${isBooked ? "#dcfce7" : "var(--border-color)"}`, 
-                                borderRadius: "20px", overflow: "hidden", 
-                                boxShadow: isBooked ? '0 10px 15px -3px rgba(34,197,94,0.05)' : '0 4px 6px -1px rgba(0,0,0,0.02)'
-                            }}>
+                            <div key={room.room_id} className={`${styles.roomCard} ${isBooked ? styles.roomCardBooked : ''}`}>
                                 <div style={{ height: "4px", background: tc }} />
-                                <div style={{ padding: "24px" }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
+                                <div className={styles.roomCardContent}>
+                                    <div className={styles.roomHeader}>
                                         <div>
-                                            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
-                                                <span style={{ fontSize: "20px", fontWeight: 800, color: "#1e293b" }}>{room.room_number}</span>
-                                                <span style={{ padding: "2px 8px", borderRadius: "6px", background: `${tc}15`, color: tc, fontSize: "10px", fontWeight: 700 }}>{room.room_type}</span>
+                                            <div className={styles.roomTitle}>
+                                                <span className={styles.roomNumber}>{room.room_number}</span>
+                                                <span className={styles.roomBadge} style={{ background: `${tc}15`, color: tc }}>{room.room_type}</span>
                                             </div>
-                                            <div style={{ fontSize: "13px", color: "#64748b", fontWeight: 500 }}>
+                                            <div className={styles.roomSub}>
                                                 📍 {room.building} · Floor {room.floor}
                                             </div>
                                         </div>
-                                        <div style={{ 
-                                            padding: "4px 10px", borderRadius: "20px", 
-                                            background: isBooked ? "#f0fdf4" : "#f1f5f9", 
-                                            color: isBooked ? "#16a34a" : "#64748b", 
-                                            fontSize: "11px", fontWeight: 700,
-                                            border: `1px solid ${isBooked ? "#dcfce7" : "#e2e8f0"}`
-                                        }}>
+                                        <div className={`${styles.statusBadge} ${isBooked ? styles.statusBadgeBooked : ''}`}>
                                             {isBooked ? "✓ Confirmed" : "Available"}
                                         </div>
                                     </div>
                                     
-                                    <div style={{ 
-                                        display: "flex", alignItems: "center", gap: "12px", 
-                                        padding: "12px", borderRadius: "12px", background: "#f8fafc", 
-                                        marginBottom: "24px" 
-                                    }}>
+                                    <div className={styles.capacityBar}>
                                         <span style={{ fontSize: '18px' }}>👥</span>
-                                        <span style={{ fontSize: "14px", fontWeight: 700, color: "#1e293b" }}>{room.capacity}</span>
-                                        <span style={{ fontSize: "13px", color: "#64748b" }}>Max Capacity</span>
+                                        <span className={styles.capacityText}>{room.capacity}</span>
+                                        <span className={styles.capacityLabel}>Max Capacity</span>
                                     </div>
 
                                     {isBooked ? (
-                                        <div style={{ 
-                                            width: "100%", padding: "12px", borderRadius: "12px", 
-                                            background: "#f0fdf4", color: "#16a34a", 
-                                            fontSize: "14px", fontWeight: 700, textAlign: "center", 
-                                            border: "1px solid #dcfce7" 
-                                        }}>
+                                        <div className={styles.sentBadge}>
                                             Request Sent
                                         </div>
                                     ) : (
-                                        <button onClick={() => setModalRoom(room)} style={{ 
-                                            width: "100%", padding: "12px", borderRadius: "12px", 
-                                            background: "white", color: "#7c3aed", 
-                                            fontSize: "14px", fontWeight: 700, border: "1px solid #ddd6fe", 
-                                            cursor: "pointer", transition: 'all 0.2s'
-                                        }}
-                                        onMouseEnter={(e) => { e.currentTarget.style.background = "#7c3aed"; e.currentTarget.style.color = "white"; }}
-                                        onMouseLeave={(e) => { e.currentTarget.style.background = "white"; e.currentTarget.style.color = "#7c3aed"; }}>
+                                        <button onClick={() => setModalRoom(room)} className={styles.bookBtn}>
                                             Book This Room
                                         </button>
                                     )}
@@ -357,8 +317,6 @@ export default function RoomFinder() {
                     loading={bookingLoading} 
                 />
             )}
-            
-            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
     );
 }

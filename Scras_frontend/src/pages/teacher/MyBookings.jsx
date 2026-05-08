@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { getCurrentUser } from '../../services/auth_service';
 import * as teacherService from '../../services/teacher_service';
 import * as taService from '../../services/ta_service';
+import styles from './MyBookings.module.css';
 
 const statusConfig = {
     Confirmed: { label: "Approved", bg: "#f0fdf4", color: "#16a34a", dot: "#22c55e", icon: "✓" },
@@ -88,103 +89,44 @@ export default function MyBookings({ onPageChange }) {
     console.log("📋 Current Bookings in State:", bookings);
 
     return (
-        <div style={{ padding: "0" }}>
-            <div style={{ marginBottom: "32px", display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className={styles.container}>
+            <div className={styles.header}>
                 <div>
-                    <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b', marginBottom: '8px' }}>My Bookings</h1>
-                    <p style={{ color: '#64748b', fontSize: '14px' }}>Track and manage your room reservation requests</p>
+                    <h1>My Bookings</h1>
+                    <p>Track and manage your room reservation requests</p>
                 </div>
                 <button 
                     onClick={() => onPageChange('room-finder')}
-                    style={{ 
-                        background: '#7c3aed', 
-                        color: 'white', 
-                        padding: '12px 24px', 
-                        borderRadius: '12px', 
-                        border: 'none', 
-                        fontWeight: '700', 
-                        fontSize: '14px', 
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        boxShadow: '0 10px 15px -3px rgba(124, 58, 237, 0.3)',
-                        transition: 'all 0.2s'
-                    }}
-                    onMouseEnter={(e) => { 
-                        e.currentTarget.style.transform = 'translateY(-2px)'; 
-                        e.currentTarget.style.boxShadow = '0 15px 20px -3px rgba(124, 58, 237, 0.4)'; 
-                    }}
-                    onMouseLeave={(e) => { 
-                        e.currentTarget.style.transform = 'translateY(0)'; 
-                        e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(124, 58, 237, 0.3)'; 
-                    }}
+                    className={styles.bookBtn}
                 >
-                    <span style={{ fontSize: '18px', fontWeight: '400' }}>+</span> Book New Room
+                    <span>+</span> Book New Room
                 </button>
             </div>
 
             {message.text && (
-                <div style={{ 
-                    padding: "14px 20px", 
-                    borderRadius: "12px", 
-                    marginBottom: "24px", 
-                    background: message.type === "success" ? "#f0fdf4" : "#fef2f2", 
-                    border: `1px solid ${message.type === "success" ? "#dcfce7" : "#fecaca"}`, 
-                    color: message.type === "success" ? "#15803d" : "#b91c1c", 
-                    fontSize: "14px", 
-                    fontWeight: 600,
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                }}>
+                <div className={`${styles.alert} ${message.type === 'success' ? styles.alertSuccess : styles.alertError}`}>
                     <span>{message.text}</span>
                     <button 
                         onClick={() => setMessage({ text: "", type: "" })}
-                        style={{ 
-                            background: 'transparent', 
-                            border: 'none', 
-                            cursor: 'pointer',
-                            fontSize: '18px',
-                            color: 'inherit',
-                            padding: '0 8px'
-                        }}
+                        className={styles.closeBtn}
                     >×</button>
                 </div>
             )}
 
             {/* Stats Bar */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px", marginBottom: "32px" }}>
+            <div className={styles.statsGrid}>
                 {[
                     { label: "Approved", value: counts.approved, ...statusConfig.Confirmed },
                     { label: "Pending Review", value: counts.pending, ...statusConfig.Pending },
                     { label: "Cancelled", value: counts.cancelled, ...statusConfig.Cancelled },
                 ].map((s) => (
-                    <div key={s.label} style={{ 
-                        background: "var(--card-bg)", 
-                        border: "1px solid #e2e8f0", 
-                        borderRadius: "20px", 
-                        padding: "24px", 
-                        display: "flex", 
-                        alignItems: "center", 
-                        gap: "20px",
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
-                    }}>
-                        <div style={{ 
-                            width: "48px", 
-                            height: "48px", 
-                            borderRadius: "14px", 
-                            background: s.bg, 
-                            display: "flex", 
-                            alignItems: "center", 
-                            justifyContent: "center", 
-                            fontSize: "20px", 
-                            color: s.color,
-                            border: `1px solid ${s.dot}20`
-                        }}>{s.icon}</div>
+                    <div key={s.label} className={styles.statCard}>
+                        <div className={styles.statIconWrapper} style={{ background: s.bg, color: s.color, border: `1px solid ${s.dot}20` }}>
+                            {s.icon}
+                        </div>
                         <div>
-                            <p style={{ fontSize: "24px", fontWeight: 800, color: "#1e293b", margin: 0 }}>{s.value}</p>
-                            <p style={{ fontSize: "12px", color: "#64748b", fontWeight: 700, margin: 0, letterSpacing: '0.02em' }}>
+                            <p className={styles.statValue} style={{ color: s.color, textShadow: `0 2px 4px ${s.color}20` }}>{s.value}</p>
+                            <p className={styles.statLabel}>
                                 {s.label.toUpperCase()}
                             </p>
                         </div>
@@ -194,45 +136,24 @@ export default function MyBookings({ onPageChange }) {
 
             {loading ? (
                 <div style={{ textAlign: "center", padding: "60px 0" }}>
-                    <div style={{ 
-                        width: '32px', 
-                        height: '32px', 
-                        border: '3px solid #f1f5f9', 
-                        borderTopColor: '#7c3aed', 
-                        borderRadius: '50%', 
-                        animation: 'spin 0.8s linear infinite', 
-                        margin: '0 auto 16px' 
-                    }}></div>
-                    <p style={{ color: "#64748b", fontSize: "14px" }}>Fetching your reservations...</p>
+                    <div className={styles.spinner}></div>
+                    <p style={{ color: "var(--text-muted)", fontSize: "14px" }}>Fetching your reservations...</p>
                 </div>
             ) : (
-                <div style={{ 
-                    background: "var(--card-bg)", 
-                    border: "1px solid #eef2f6", 
-                    borderRadius: "24px", 
-                    overflow: "hidden", 
-                    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' 
-                }}>
+                <div className={styles.tableCard}>
                     {bookings.length === 0 ? (
-                        <div style={{ textAlign: "center", padding: "80px 0", color: "#94a3b8" }}>
-                            <div style={{ fontSize: "48px", marginBottom: "16px" }}>📅</div>
+                        <div className={styles.emptyState}>
+                            <div className={styles.emptyIcon}>📅</div>
                             <p style={{ fontSize: "16px", fontWeight: 600 }}>No reservations found</p>
                             <p style={{ fontSize: "14px" }}>Any rooms you book will appear here.</p>
                         </div>
                     ) : (
                         <div style={{ overflowX: 'auto' }}>
                             <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                                <thead>
-                                    <tr style={{ background: "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
+                                <thead className={styles.tableHeader}>
+                                    <tr>
                                         {["ROOM", "DATE & TIME", "PURPOSE", "STATUS"].map((col) => (
-                                            <th key={col} style={{ 
-                                                textAlign: "left", 
-                                                padding: "16px 24px", 
-                                                fontSize: "11px", 
-                                                color: "#94a3b8", 
-                                                fontWeight: 800, 
-                                                letterSpacing: "0.06em" 
-                                            }}>{col}</th>
+                                            <th key={col}>{col}</th>
                                         ))}
                                     </tr>
                                 </thead>
@@ -240,54 +161,40 @@ export default function MyBookings({ onPageChange }) {
                                     {bookings.map((booking, idx) => {
                                         const sc = statusConfig[booking.status] || statusConfig.Pending;
                                         return (
-                                            <tr key={booking.booking_id || idx} style={{ borderBottom: "1px solid #f8fafc" }}>
+                                            <tr key={booking.booking_id || idx} style={{ borderBottom: "1px solid var(--border-color)" }}>
                                                 <td style={{ padding: "20px 24px" }}>
-                                                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                                                    <div className={styles.roomCell}>
                                                         <span style={{ fontSize: '20px' }}>
                                                             {roomTypeIcons[booking.room_type] || '🏛️'}
                                                         </span>
                                                         <div>
-                                                            <div style={{ fontSize: "14px", fontWeight: 800, color: "#1e293b" }}>
+                                                            <div className={styles.roomNumber}>
                                                                 {booking.room_number}
                                                             </div>
-                                                            <div style={{ fontSize: "11px", color: "#64748b", fontWeight: 500 }}>
+                                                            <div className={styles.roomType}>
                                                                 {booking.room_type}
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td style={{ padding: "20px 24px" }}>
-                                                    <div style={{ fontSize: "14px", fontWeight: 600, color: "#1e293b" }}>
-                                                        {formatDate(booking.booking_date)}
-                                                    </div>
-                                                    <div style={{ fontSize: "12px", color: "#64748b" }}>
-                                                        {booking.start_time} – {booking.end_time}
+                                                    <div className={styles.dateTimeCell}>
+                                                        <span className={styles.dateText}>
+                                                            {formatDate(booking.booking_date)}
+                                                        </span>
+                                                        <span className={styles.timeText}>
+                                                            {booking.start_time} – {booking.end_time}
+                                                        </span>
                                                     </div>
                                                 </td>
                                                 <td style={{ padding: "20px 24px" }}>
-                                                    <span style={{ fontSize: "13px", color: "#334155", fontWeight: 500 }}>
+                                                    <span className={styles.purposeText}>
                                                         {booking.purpose}
                                                     </span>
                                                 </td>
                                                 <td style={{ padding: "20px 24px" }}>
-                                                    <span style={{ 
-                                                        display: "inline-flex", 
-                                                        alignItems: "center", 
-                                                        gap: "6px", 
-                                                        padding: "5px 12px", 
-                                                        borderRadius: "20px", 
-                                                        background: sc.bg, 
-                                                        color: sc.color, 
-                                                        fontSize: "11px", 
-                                                        fontWeight: 700,
-                                                        border: `1px solid ${sc.dot}20`
-                                                    }}>
-                                                        <span style={{ 
-                                                            width: "6px", 
-                                                            height: "6px", 
-                                                            borderRadius: "50%", 
-                                                            background: sc.dot 
-                                                        }} />
+                                                    <span className={styles.statusBadge} style={{ background: sc.bg, color: sc.color, border: `1px solid ${sc.dot}20` }}>
+                                                        <span className={styles.statusDot} style={{ background: sc.dot }} />
                                                         {sc.label}
                                                     </span>
                                                 </td>
@@ -300,7 +207,6 @@ export default function MyBookings({ onPageChange }) {
                     )}
                 </div>
             )}
-            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
     );
 }

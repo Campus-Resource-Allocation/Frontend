@@ -5,10 +5,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { getRooms, createRoom, deleteRoom } from '../../services/admin_service';
-import SearchBar from '../../components/common/SearchBar';
-import StatusBadge from '../../components/common/StatusBadge';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ConfirmModal from '../../components/common/ConfirmModal';
+import styles from './Rooms.module.css';
 
 const Rooms = () => {
     const [rooms, setRooms] = useState([]);
@@ -101,7 +100,6 @@ const Rooms = () => {
         }
     };
 
-    // Helper function to get random status for demo (in real app, status comes from backend)
     const getRandomStatus = () => {
         const statuses = ['Available', 'Occupied', 'Maintenance'];
         return statuses[Math.floor(Math.random() * statuses.length)];
@@ -110,41 +108,38 @@ const Rooms = () => {
     if (loading) return <LoadingSpinner />;
 
     return (
-        <div className="rooms-page">
-            <div className="page-header">
-                <div className="page-title">
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <div className={styles.title}>
                     <h1>Rooms</h1>
                     <p>{rooms.length} rooms total</p>
                 </div>
-                <button className="btn-primary" onClick={() => setShowAddModal(true)}>
-                    + Add Room
-                </button>
             </div>
 
-            <div className="stats-grid" style={{gridTemplateColumns: 'repeat(3, 1fr)'}}>
-                <div className="stat-card card-peach">
-                    <span className="stat-icon" style={{color: '#8b5cf6'}}>🚪</span>
-                    <span className="stat-label">Total Rooms</span>
-                    <span className="stat-value">{rooms.length}</span>
+            <div className={styles.statsGrid}>
+                <div className={styles.statCard}>
+                    <span className={styles.statIcon}>🚪</span>
+                    <span className={styles.statLabel}>Total Rooms</span>
+                    <span className={styles.statValue}>{rooms.length}</span>
                 </div>
-                <div className="stat-card card-green">
-                    <span className="stat-icon" style={{color: '#10b981'}}>✅</span>
-                    <span className="stat-label">Available</span>
-                    <span className="stat-value">{Math.floor(rooms.length * 0.7)}</span>
+                <div className={styles.statCard}>
+                    <span className={styles.statIcon}>✅</span>
+                    <span className={styles.statLabel}>Available</span>
+                    <span className={styles.statValue}>{Math.floor(rooms.length * 0.7)}</span>
                 </div>
-                <div className="stat-card card-yellow">
-                    <span className="stat-icon" style={{color: '#f59e0b'}}>👥</span>
-                    <span className="stat-label">Total Capacity</span>
-                    <span className="stat-value">{rooms.reduce((acc, r) => acc + parseInt(r.capacity || 0), 0)}</span>
+                <div className={styles.statCard}>
+                    <span className={styles.statIcon}>👥</span>
+                    <span className={styles.statLabel}>Total Capacity</span>
+                    <span className={styles.statValue}>{rooms.reduce((acc, r) => acc + parseInt(r.capacity || 0), 0)}</span>
                 </div>
             </div>
 
-            {error && <div className="error-message">{error}</div>}
+            {error && <div className={styles.errorMessage}>{error}</div>}
 
-            <div className="table-container">
-                <div className="table-header-actions">
-                    <div className="search-input-wrapper">
-                        <span className="search-icon">🔍</span>
+            <div className={styles.tableContainer}>
+                <div className={styles.tableHeaderActions}>
+                    <div className={styles.searchInputWrapper}>
+                        <span className={styles.searchIcon}>🔍</span>
                         <input
                             type="text"
                             placeholder="Search rooms..."
@@ -152,10 +147,13 @@ const Rooms = () => {
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <span className="results-count">{filteredRooms.length} of {rooms.length} results</span>
+                    <span className={styles.resultsCount}>{filteredRooms.length} of {rooms.length} results</span>
+                    <button className={styles.addBtn} onClick={() => setShowAddModal(true)} style={{
+                        padding: '10px 20px', borderRadius: '12px', background: 'var(--admin-accent)', color: 'white', border: 'none', fontWeight: '700', cursor: 'pointer'
+                    }}>+ Add Room</button>
                 </div>
 
-                <table className="data-table">
+                <table className={styles.dataTable}>
                     <thead>
                         <tr>
                             <th>ROOM</th>
@@ -177,8 +175,8 @@ const Rooms = () => {
                             return (
                                 <tr key={room.room_id}>
                                     <td>
-                                        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
-                                            <div style={{width: '32px', height: '32px', borderRadius: '8px', background: `var(--card-${color})`, color: `var(--text-${color}-dark, #333)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 'bold'}}>
+                                        <div className={styles.roomCell}>
+                                            <div className={styles.roomIcon} style={{ background: `var(--card-${color})`, color: `var(--text-${color}-dark)` }}>
                                                 🚪
                                             </div>
                                             <strong>{room.room_number}</strong>
@@ -187,22 +185,14 @@ const Rooms = () => {
                                     <td>{room.building}</td>
                                     <td>{room.floor || 'Ground'}</td>
                                     <td>{room.capacity} seats</td>
-                                    <td><span className={`badge badge-${color}`}>{room.room_type}</span></td>
+                                    <td><span className={styles.badge} style={{ background: `var(--card-${color})`, color: `var(--text-${color}-dark)` }}>{room.room_type}</span></td>
                                     <td>
-                                        <span className={`badge badge-${statusColor}`}>
-                                            <span className="status-dot"></span> {status}
+                                        <span className={styles.badge} style={{ background: `var(--card-${statusColor})`, color: `var(--text-${statusColor}-dark)` }}>
+                                            <span className={styles.statusDot}></span> {status}
                                         </span>
                                     </td>
                                     <td>
-                                        <button
-                                            className="btn-icon btn-danger"
-                                            onClick={() => {
-                                                setSelectedRoom(room);
-                                                setShowDeleteModal(true);
-                                            }}
-                                        >
-                                            🗑️
-                                        </button>
+                                        <button onClick={() => { setSelectedRoom(room); setShowDeleteModal(true); }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontWeight: '600' }}>Delete</button>
                                     </td>
                                 </tr>
                             );
@@ -210,20 +200,19 @@ const Rooms = () => {
                     </tbody>
                 </table>
                 {filteredRooms.length === 0 && (
-                    <div className="empty-state">No rooms found</div>
+                    <div className={styles.emptyState}>No rooms found</div>
                 )}
             </div>
 
-            {/* Add Room Modal */}
             <ConfirmModal
                 isOpen={showAddModal}
                 onClose={() => setShowAddModal(false)}
                 onConfirm={handleAddRoom}
                 title="Add New Room"
                 message={
-                    <div className="modal-form">
-                        <div className="form-row">
-                            <div className="form-group">
+                    <div className={styles.modalForm}>
+                        <div className={styles.formRow}>
+                            <div className={styles.formGroup}>
                                 <label>Room Number:</label>
                                 <input
                                     type="text"
@@ -232,7 +221,7 @@ const Rooms = () => {
                                     placeholder="A-101"
                                 />
                             </div>
-                            <div className="form-group">
+                            <div className={styles.formGroup}>
                                 <label>Building:</label>
                                 <input
                                     type="text"
@@ -242,8 +231,8 @@ const Rooms = () => {
                                 />
                             </div>
                         </div>
-                        <div className="form-row">
-                            <div className="form-group">
+                        <div className={styles.formRow}>
+                            <div className={styles.formGroup}>
                                 <label>Floor:</label>
                                 <input
                                     type="number"
@@ -252,7 +241,7 @@ const Rooms = () => {
                                     placeholder="1"
                                 />
                             </div>
-                            <div className="form-group">
+                            <div className={styles.formGroup}>
                                 <label>Capacity:</label>
                                 <input
                                     type="number"
@@ -262,11 +251,12 @@ const Rooms = () => {
                                 />
                             </div>
                         </div>
-                        <div className="form-group">
+                        <div className={styles.formGroup}>
                             <label>Room Type:</label>
                             <select
                                 value={formData.room_type}
                                 onChange={(e) => setFormData({ ...formData, room_type: e.target.value })}
+                                className={styles.select}
                             >
                                 {roomTypes.map(type => (
                                     <option key={type} value={type}>{type}</option>
@@ -279,7 +269,6 @@ const Rooms = () => {
                 confirmVariant="primary"
             />
 
-            {/* Delete Modal */}
             <ConfirmModal
                 isOpen={showDeleteModal}
                 onClose={() => setShowDeleteModal(false)}

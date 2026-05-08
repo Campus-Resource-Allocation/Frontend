@@ -34,16 +34,38 @@ const App = () => {
     const [activePage, setActivePage] = useState('departments');
     const [loading, setLoading] = useState(true);
     
-    // Global Theme State
-    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+    // Helper to get/set cookies for cross-port (localhost) theme sharing
+    const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+    };
+
+    const setCookie = (name, value) => {
+        document.cookie = `${name}=${value}; path=/; domain=localhost; max-age=31536000`; // 1 year
+    };
+
+    // Global Theme State: Check cookie first, then localStorage, default to light
+    const [theme, setTheme] = useState(getCookie('theme') || localStorage.getItem('theme') || 'light');
 
     // Detect if this is the Admin Portal (Port 5000)
     const isAdminPortal = window.location.port === '5000';
 
-    // Apply Theme Globally
+    // Apply Theme Globally and Listen for Cross-Tab Changes
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
+        localStorage.setItem('theme', theme); // Triggers 'storage' event for other tabs
+        setCookie('theme', theme);
+
+        // Listen for changes from other tabs (Real-time sync)
+        const handleStorageChange = (e) => {
+            if (e.key === 'theme' && e.newValue) {
+                setTheme(e.newValue);
+            }
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
     }, [theme]);
 
     const toggleTheme = () => {
@@ -110,8 +132,8 @@ const App = () => {
     if (!authenticated) {
         // Render either Admin Portal or User Portal login
         return isAdminPortal 
-            ? <AdminLogin onLoginSuccess={handleLoginSuccess} /> 
-            : <Login onLoginSuccess={handleLoginSuccess} />;
+            ? <AdminLogin onLoginSuccess={handleLoginSuccess} theme={theme} toggleTheme={toggleTheme} /> 
+            : <Login onLoginSuccess={handleLoginSuccess} theme={theme} toggleTheme={toggleTheme} />;
     }
 
     const userRole = user?.role?.toLowerCase();

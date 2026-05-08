@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import styles from './Sidebar.module.css';
 
 const Sidebar = ({ userRole, activePage, onPageChange, onLogout }) => {
     const adminNavItems = [
@@ -68,7 +69,7 @@ const Sidebar = ({ userRole, activePage, onPageChange, onLogout }) => {
             case 'admin': return adminNavItems;
             case 'student': return studentNavItems;
             case 'teacher': return teacherNavItems;
-            case 'ta': return teacherNavItems; // TAs use same nav structure
+            case 'ta': return teacherNavItems;
             default: return adminNavItems;
         }
     };
@@ -105,69 +106,45 @@ const Sidebar = ({ userRole, activePage, onPageChange, onLogout }) => {
     const navItems = getNavItems();
 
     return (
-        <div className="sidebar">
-            <div className="sidebar-header">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{
-                        background: '#7c3aed',
-                        color: 'white',
-                        borderRadius: '8px',
-                        width: '32px',
-                        height: '32px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '16px',
-                        fontWeight: 'bold'
-                    }}>S</span>
-                    <h2>SCRAS</h2>
+        <div className={styles.sidebar}>
+            <div className={styles.header}>
+                <div className={styles.logoWrapper}>
+                    <div className={styles.logoBox}>S</div>
+                    <h2 className={styles.logoText}>SCRAS</h2>
                 </div>
-                <span className="admin-badge">{getRoleBadge()}</span>
+                <span className={styles.roleBadge}>{getRoleBadge()}</span>
             </div>
 
-            <div className="sidebar-section-title">{getSectionLabel()}</div>
+            <div className={styles.sectionTitle}>{getSectionLabel()}</div>
 
-            <nav className="sidebar-nav">
+            <nav className={styles.nav}>
                 {navItems.map(item => (
                     <button
                         key={item.id}
-                        className={`nav-item ${activePage === item.id ? 'active' : ''}`}
+                        className={`${styles.navItem} ${activePage === item.id ? styles.navItemActive : ''}`}
                         onClick={() => onPageChange(item.id)}
                     >
-                        <span className="nav-icon">{item.icon}</span>
+                        <span className={styles.navIcon}>{item.icon}</span>
                         <span>{item.label}</span>
                     </button>
                 ))}
             </nav>
 
-            <div className="sidebar-footer">
-                <div className="user-profile-box">
-                    <div className="avatar-circle">
+            <div className={styles.footer}>
+                <div className={styles.profileBox}>
+                    <div className={styles.avatar}>
                         {getUserName().split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
                     </div>
-                    <div className="user-info">
-                        <span className="user-name">{getUserName()}</span>
-                        <span className="user-email">{getUserEmail()}</span>
+                    <div className={styles.userInfo}>
+                        <span className={styles.userName}>{getUserName()}</span>
+                        <span className={styles.userEmail}>{getUserEmail()}</span>
                     </div>
                     <button
-                        className="logout-icon"
+                        className={styles.logoutBtn}
                         onClick={onLogout}
                         title="Logout"
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            color: '#64748b',
-                            padding: '6px',
-                            borderRadius: '6px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            transition: 'all 0.15s'
-                        }}
-                        onMouseEnter={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#ef4444'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#64748b'; }}
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
                     </button>

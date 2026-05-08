@@ -6,6 +6,7 @@
 
 import React, { useState } from 'react';
 import { uploadTimetable } from '../../services/admin_service';
+import styles from './TimetableUpload.module.css';
 
 const TimetableUpload = () => {
     const [file, setFile] = useState(null);
@@ -81,23 +82,14 @@ const TimetableUpload = () => {
     };
 
     return (
-        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-            <div style={{ marginBottom: '32px' }}>
-                <h1 style={{ fontSize: '28px', fontWeight: '800', color: '#1e293b', marginBottom: '8px' }}>Timetable Generator</h1>
-                <p style={{ color: '#64748b', fontSize: '15px' }}>Upload your master XLS file to automatically generate schedules and assign rooms.</p>
+        <div className={styles.uploadContainer}>
+            <div className={styles.uploadHeader}>
+                <h1 className={styles.title}>Timetable Generator</h1>
+                <p className={styles.subtitle}>Upload your master XLS file to automatically generate schedules and assign rooms.</p>
             </div>
 
             <div 
-                style={{
-                    background: 'var(--card-bg)',
-                    border: `2px dashed ${dragActive ? '#7c3aed' : '#e2e8f0'}`,
-                    borderRadius: '24px',
-                    padding: '60px 40px',
-                    textAlign: 'center',
-                    transition: 'all 0.2s ease',
-                    position: 'relative',
-                    cursor: 'pointer'
-                }}
+                className={`${styles.dropZone} ${dragActive ? styles.dropZoneActive : ''}`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}
@@ -111,55 +103,31 @@ const TimetableUpload = () => {
                     onChange={handleFileChange}
                 />
                 <label htmlFor="file-upload" style={{ cursor: 'pointer' }}>
-                    <div style={{ fontSize: '48px', marginBottom: '16px' }}>📊</div>
-                    <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>
+                    <div className={styles.dropZoneIcon}>📊</div>
+                    <h3 className={styles.dropZoneTitle}>
                         {file ? file.name : "Drag and drop your Excel file"}
                     </h3>
-                    <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>
+                    <p className={styles.dropZoneDesc}>
                         Supports .xls and .xlsx formats
                     </p>
-                    <div style={{ 
-                        display: 'inline-block',
-                        padding: '12px 24px',
-                        background: '#f1f5f9',
-                        color: '#475569',
-                        borderRadius: '12px',
-                        fontWeight: '600',
-                        fontSize: '14px'
-                    }}>
+                    <div className={styles.browseBtn}>
                         Browse Files
                     </div>
                 </label>
             </div>
 
             {error && (
-                <div style={{ 
-                    marginTop: '20px',
-                    padding: '16px',
-                    background: '#fef2f2',
-                    color: '#b91c1c',
-                    borderRadius: '12px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    border: '1px solid #fecaca'
-                }}>
+                <div className={styles.errorMessage}>
                     ⚠️ {error}
                 </div>
             )}
 
             {result && (
-                <div style={{ 
-                    marginTop: '20px',
-                    padding: '24px',
-                    background: '#f0fdf4',
-                    color: '#166534',
-                    borderRadius: '16px',
-                    border: '1px solid #dcfce7'
-                }}>
-                    <h4 style={{ fontWeight: '700', marginBottom: '8px' }}>✅ Upload Successful!</h4>
-                    <p style={{ fontSize: '14px', marginBottom: '8px' }}>{result.message}</p>
+                <div className={styles.successMessage}>
+                    <h4 className={styles.successTitle}>✅ Upload Successful!</h4>
+                    <p className={styles.successText}>{result.message}</p>
                     {result.total_records && (
-                        <div style={{ marginTop: '12px', fontSize: '13px', opacity: 0.8 }}>
+                        <div className={styles.successDetails}>
                             Processed <strong>{result.total_records}</strong> schedule entries into the database.
                         </div>
                     )}
@@ -169,29 +137,16 @@ const TimetableUpload = () => {
             <button 
                 onClick={handleUpload}
                 disabled={!file || uploading}
-                style={{
-                    width: '100%',
-                    marginTop: '32px',
-                    padding: '16px',
-                    borderRadius: '16px',
-                    background: !file || uploading ? '#ddd6fe' : '#7c3aed',
-                    color: 'white',
-                    fontSize: '16px',
-                    fontWeight: '700',
-                    border: 'none',
-                    cursor: !file || uploading ? 'not-allowed' : 'pointer',
-                    boxShadow: !file || uploading ? 'none' : '0 10px 15px -3px rgba(124, 58, 237, 0.3)',
-                    transition: 'all 0.2s'
-                }}
+                className={styles.submitBtn}
             >
                 {uploading ? "Processing Timetable..." : "Generate Timetable Now"}
             </button>
 
-            <div style={{ marginTop: '40px', background: '#f8fafc', padding: '24px', borderRadius: '20px' }}>
-                <h4 style={{ fontSize: '14px', fontWeight: '700', color: '#475569', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div className={styles.guidelines}>
+                <h4 className={styles.guidelinesTitle}>
                     Guidelines for Upload
                 </h4>
-                <ul style={{ paddingLeft: '20px', fontSize: '13px', color: '#64748b', lineHeight: '1.6' }}>
+                <ul className={styles.guidelinesList}>
                     <li>Ensure the file has the standard structure (Days in Column A, Rooms in Column B).</li>
                     <li>Each time slot should span 9 columns as per the university standard.</li>
                     <li>Avoid merged cells within the data grid area.</li>

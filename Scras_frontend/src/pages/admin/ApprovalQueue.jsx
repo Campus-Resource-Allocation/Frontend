@@ -5,9 +5,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { getBookingRequests, approveBooking, rejectBooking } from '../../services/admin_service';
-import StatusBadge from '../../components/common/StatusBadge';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ConfirmModal from '../../components/common/ConfirmModal';
+import styles from './ApprovalQueue.module.css';
 
 const ApprovalQueue = () => {
     const [requests, setRequests] = useState([]);
@@ -74,48 +74,46 @@ const ApprovalQueue = () => {
     if (loading) return <LoadingSpinner />;
 
     return (
-        <div className="approvals-page">
-            <div className="page-header">
-                <div className="page-title">
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <div className={styles.title}>
                     <h1>Approval Queue</h1>
                     <p>Review and manage room booking requests</p>
                 </div>
             </div>
 
-            <div className="stats-grid" style={{gridTemplateColumns: 'repeat(4, 1fr)'}}>
-                <div className="stat-card card-peach" onClick={() => setActiveTab('all')} style={{cursor: 'pointer', border: activeTab === 'all' ? '2px solid #8b5cf6' : 'none'}}>
-                    <span className="stat-icon" style={{color: '#8b5cf6'}}>📋</span>
-                    <span className="stat-label">Total Requests</span>
-                    <span className="stat-value">{getStatusCount('all')}</span>
+            <div className={styles.statsGrid}>
+                <div className={`${styles.statCard} ${activeTab === 'all' ? styles.statCardActive : ''}`} onClick={() => setActiveTab('all')}>
+                    <span className={styles.statIcon}>📋</span>
+                    <span className={styles.statLabel}>Total Requests</span>
+                    <span className={styles.statValue}>{getStatusCount('all')}</span>
                 </div>
-                <div className="stat-card card-yellow" onClick={() => setActiveTab('pending')} style={{cursor: 'pointer', border: activeTab === 'pending' ? '2px solid #f59e0b' : 'none'}}>
-                    <span className="stat-icon" style={{color: '#f59e0b'}}>⏳</span>
-                    <span className="stat-label">Pending</span>
-                    <span className="stat-value">{getStatusCount('pending')}</span>
+                <div className={`${styles.statCard} ${activeTab === 'pending' ? styles.statCardActive : ''}`} onClick={() => setActiveTab('pending')}>
+                    <span className={styles.statIcon}>⏳</span>
+                    <span className={styles.statLabel}>Pending</span>
+                    <span className={styles.statValue}>{getStatusCount('pending')}</span>
                 </div>
-                <div className="stat-card card-green" onClick={() => setActiveTab('approved')} style={{cursor: 'pointer', border: activeTab === 'approved' ? '2px solid #10b981' : 'none'}}>
-                    <span className="stat-icon" style={{color: '#10b981'}}>✅</span>
-                    <span className="stat-label">Approved</span>
-                    <span className="stat-value">{getStatusCount('approved')}</span>
+                <div className={`${styles.statCard} ${activeTab === 'approved' ? styles.statCardActive : ''}`} onClick={() => setActiveTab('approved')}>
+                    <span className={styles.statIcon}>✅</span>
+                    <span className={styles.statLabel}>Approved</span>
+                    <span className={styles.statValue}>{getStatusCount('approved')}</span>
                 </div>
-                <div className="stat-card card-pink" onClick={() => setActiveTab('rejected')} style={{cursor: 'pointer', border: activeTab === 'rejected' ? '2px solid #ec4899' : 'none'}}>
-                    <span className="stat-icon" style={{color: '#ec4899'}}>❌</span>
-                    <span className="stat-label">Rejected</span>
-                    <span className="stat-value">{getStatusCount('rejected')}</span>
+                <div className={`${styles.statCard} ${activeTab === 'rejected' ? styles.statCardActive : ''}`} onClick={() => setActiveTab('rejected')}>
+                    <span className={styles.statIcon}>❌</span>
+                    <span className={styles.statLabel}>Rejected</span>
+                    <span className={styles.statValue}>{getStatusCount('rejected')}</span>
                 </div>
             </div>
 
-            {error && <div className="error-message">{error}</div>}
+            {error && <div className={styles.errorMessage}>{error}</div>}
 
-            <div className="table-container">
-                <div className="table-header-actions">
-                    <h3 style={{fontSize: '16px', fontWeight: '700', color: '#1e293b', margin: 0}}>
-                        {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Requests
-                    </h3>
-                    <span className="results-count">{filteredRequests.length} results</span>
+            <div className={styles.tableContainer}>
+                <div className={styles.tableHeader}>
+                    <h3>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Requests</h3>
+                    <span className={styles.resultsCount}>{filteredRequests.length} results</span>
                 </div>
 
-                <table className="data-table">
+                <table className={styles.dataTable}>
                     <thead>
                         <tr>
                             <th>REQUESTER</th>
@@ -131,17 +129,17 @@ const ApprovalQueue = () => {
                             const colors = ['purple', 'blue', 'green', 'orange', 'pink'];
                             const color = colors[index % colors.length];
                             
-                            const statusColor = request.status?.toLowerCase() === 'approved' ? 'green' 
-                                              : request.status?.toLowerCase() === 'rejected' ? 'pink' 
-                                              : 'yellow';
+                            const statusColorClass = request.status?.toLowerCase() === 'approved' ? 'green' 
+                                               : request.status?.toLowerCase() === 'rejected' ? 'pink' 
+                                               : 'yellow';
 
                             const initials = request.Teacher?.name ? request.Teacher.name.replace('Dr. ', '').split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase() : 'RQ';
 
                             return (
                                 <tr key={request.booking_id}>
                                     <td>
-                                        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
-                                            <div style={{width: '32px', height: '32px', borderRadius: '50%', background: `var(--card-${color})`, color: `var(--text-${color}-dark, #333)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold'}}>
+                                        <div className={styles.requesterCell}>
+                                            <div className={styles.avatar} style={{ background: `var(--card-${color})`, color: `var(--text-${color}-dark, #333)` }}>
                                                 {initials}
                                             </div>
                                             <strong>{request.Teacher?.name || `Request #${request.booking_id}`}</strong>
@@ -150,9 +148,9 @@ const ApprovalQueue = () => {
                                     <td><strong>{request.Room?.room_number || 'N/A'}</strong></td>
                                     <td>{request.purpose || 'Not specified'}</td>
                                     <td>
-                                        <div style={{display: 'flex', flexDirection: 'column'}}>
+                                        <div className={styles.dateTimeCell}>
                                             <span>{request.booking_date ? new Date(request.booking_date).toLocaleDateString() : 'N/A'}</span>
-                                            <span style={{fontSize: '11px', color: '#64748b'}}>
+                                            <span className={styles.timeSubtext}>
                                                 {request.TimeSlot?.start_time && request.TimeSlot?.end_time
                                                     ? `${request.TimeSlot.start_time} - ${request.TimeSlot.end_time}`
                                                     : 'Not specified'}
@@ -160,15 +158,15 @@ const ApprovalQueue = () => {
                                         </div>
                                     </td>
                                     <td>
-                                        <span className={`badge badge-${statusColor}`}>
-                                            <span className="status-dot"></span> {request.status || 'Pending'}
+                                        <span className={styles.badge} style={{ background: `var(--card-${statusColorClass})`, color: `var(--text-${statusColorClass}-dark)` }}>
+                                            <span className={styles.statusDot}></span> {request.status || 'Pending'}
                                         </span>
                                     </td>
                                     <td>
                                         {request.status?.toLowerCase() === 'pending' ? (
-                                            <div style={{display: 'flex', gap: '8px'}}>
+                                            <div className={styles.actionButtons}>
                                                 <button
-                                                    style={{background: '#10b981', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold'}}
+                                                    className={styles.approveBtn}
                                                     onClick={() => {
                                                         setSelectedRequest(request);
                                                         setShowApproveModal(true);
@@ -177,7 +175,7 @@ const ApprovalQueue = () => {
                                                     Approve
                                                 </button>
                                                 <button
-                                                    style={{background: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold'}}
+                                                    className={styles.rejectBtn}
                                                     onClick={() => {
                                                         setSelectedRequest(request);
                                                         setShowRejectModal(true);
@@ -187,7 +185,7 @@ const ApprovalQueue = () => {
                                                 </button>
                                             </div>
                                         ) : (
-                                            <span style={{color: '#94a3b8', fontSize: '12px'}}>Processed</span>
+                                            <span className={styles.processedText}>Processed</span>
                                         )}
                                     </td>
                                 </tr>
@@ -196,13 +194,12 @@ const ApprovalQueue = () => {
                     </tbody>
                 </table>
                 {filteredRequests.length === 0 && (
-                    <div className="empty-state" style={{padding: '48px', textAlign: 'center', color: '#64748b'}}>
+                    <div className={styles.emptyState}>
                         No {activeTab} requests found
                     </div>
                 )}
             </div>
 
-            {/* Approve Modal */}
             <ConfirmModal
                 isOpen={showApproveModal}
                 onClose={() => setShowApproveModal(false)}
@@ -213,7 +210,6 @@ const ApprovalQueue = () => {
                 confirmVariant="primary"
             />
 
-            {/* Reject Modal */}
             <ConfirmModal
                 isOpen={showRejectModal}
                 onClose={() => setShowRejectModal(false)}

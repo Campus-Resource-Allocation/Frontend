@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { getDepartments, getTeachers, getStudents, getRooms, getCourses } from '../../services/admin_service';
+import styles from './AdminDashboard.module.css';
 
 const AdminDashboard = () => {
     const [loading, setLoading] = useState(true);
@@ -46,25 +47,25 @@ const AdminDashboard = () => {
     if (loading) return <LoadingSpinner />;
 
     const statCards = [
-        { title: 'Departments', value: stats.departments, icon: '🏛️', color: 'blue', link: '/admin/departments' },
-        { title: 'Teachers', value: stats.teachers, icon: '👨‍🏫', color: 'green', link: '/admin/teachers' },
-        { title: 'Students', value: stats.students, icon: '👨‍🎓', color: 'purple', link: '/admin/students' },
-        { title: 'Rooms', value: stats.rooms, icon: '🚪', color: 'orange', link: '/admin/rooms' },
-        { title: 'Courses', value: stats.courses, icon: '📚', color: 'red', link: '/admin/courses' },
+        { title: 'Departments', value: stats.departments, icon: '🏛️', colorClass: styles.statBlue, link: '/admin/departments' },
+        { title: 'Teachers', value: stats.teachers, icon: '👨‍🏫', colorClass: styles.statGreen, link: '/admin/teachers' },
+        { title: 'Students', value: stats.students, icon: '👨‍🎓', colorClass: styles.statPurple, link: '/admin/students' },
+        { title: 'Rooms', value: stats.rooms, icon: '🚪', colorClass: styles.statOrange, link: '/admin/rooms' },
+        { title: 'Courses', value: stats.courses, icon: '📚', colorClass: styles.statRed, link: '/admin/courses' },
     ];
 
     return (
-        <div className="admin-dashboard">
-            <div className="dashboard-header">
+        <div className={styles.adminDashboard}>
+            <div className={styles.dashboardHeader}>
                 <h1>Dashboard</h1>
                 <p>Welcome back, Admin</p>
             </div>
 
-            <div className="stats-grid">
+            <div className={styles.statsGrid}>
                 {statCards.map((stat, index) => (
-                    <div key={index} className={`stat-card stat-${stat.color}`}>
-                        <div className="stat-icon">{stat.icon}</div>
-                        <div className="stat-info">
+                    <div key={index} className={styles.statCard}>
+                        <div className={`${styles.statIcon} ${stat.colorClass}`}>{stat.icon}</div>
+                        <div className={styles.statInfo}>
                             <h3>{stat.value}</h3>
                             <p>{stat.title}</p>
                         </div>
@@ -72,14 +73,14 @@ const AdminDashboard = () => {
                 ))}
             </div>
 
-            <div className="quick-actions">
+            <div className={styles.quickActions}>
                 <h2>Quick Actions</h2>
-                <div className="action-buttons">
-                    <button className="action-btn">➕ Add Department</button>
-                    <button className="action-btn">👨‍🏫 Add Teacher</button>
-                    <button className="action-btn">👨‍🎓 Add Student</button>
-                    <button className="action-btn">🚪 Add Room</button>
-                    <button className="action-btn">📚 Add Course</button>
+                <div className={styles.actionButtons}>
+                    <button className={styles.actionBtn}>➕ Add Department</button>
+                    <button className={styles.actionBtn}>👨‍🏫 Add Teacher</button>
+                    <button className={styles.actionBtn}>👨‍🎓 Add Student</button>
+                    <button className={styles.actionBtn}>🚪 Add Room</button>
+                    <button className={styles.actionBtn}>📚 Add Course</button>
                 </div>
             </div>
         </div>

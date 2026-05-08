@@ -4,12 +4,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { getCourses, createCourse, deleteCourse } from '../../services/admin_service';
-import { getTeachers } from '../../services/admin_service';
-import { getDepartments } from '../../services/admin_service';
-import SearchBar from '../../components/common/SearchBar';
+import { getCourses, createCourse, deleteCourse, getTeachers, getDepartments } from '../../services/admin_service';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ConfirmModal from '../../components/common/ConfirmModal';
+import styles from './Courses.module.css';
 
 const Courses = () => {
     const [courses, setCourses] = useState([]);
@@ -51,15 +49,9 @@ const Courses = () => {
             getDepartments()
         ]);
 
-        if (coursesRes.success) {
-            setCourses(coursesRes.data || []);
-        }
-        if (teachersRes.success) {
-            setTeachers(teachersRes.data || []);
-        }
-        if (deptsRes.success) {
-            setDepartments(deptsRes.data || []);
-        }
+        if (coursesRes.success) setCourses(coursesRes.data || []);
+        if (teachersRes.success) setTeachers(teachersRes.data || []);
+        if (deptsRes.success) setDepartments(deptsRes.data || []);
         setLoading(false);
     };
 
@@ -107,7 +99,6 @@ const Courses = () => {
 
     const handleDeleteCourse = async () => {
         if (!selectedCourse) return;
-
         const result = await deleteCourse(selectedCourse.course_code);
         if (result.success) {
             setShowDeleteModal(false);
@@ -121,43 +112,43 @@ const Courses = () => {
     if (loading) return <LoadingSpinner />;
 
     return (
-        <div className="courses-page">
-            <div className="page-header">
-                <div className="page-title">
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <div className={styles.title}>
                     <h1>Courses</h1>
                     <p>{courses.length} courses total</p>
                 </div>
             </div>
 
-            <div className="stats-grid" style={{gridTemplateColumns: 'repeat(4, 1fr)'}}>
-                <div className="stat-card card-peach">
-                    <span className="stat-icon" style={{color: '#8b5cf6'}}>📚</span>
-                    <span className="stat-label">Total Courses</span>
-                    <span className="stat-value">{courses.length}</span>
+            <div className={styles.statsGrid}>
+                <div className={styles.statCard}>
+                    <span className={styles.statIcon}>📚</span>
+                    <span className={styles.statLabel}>Total Courses</span>
+                    <span className={styles.statValue}>{courses.length}</span>
                 </div>
-                <div className="stat-card card-green">
-                    <span className="stat-icon" style={{color: '#10b981'}}>⏱️</span>
-                    <span className="stat-label">Total Credits</span>
-                    <span className="stat-value">{courses.reduce((acc, c) => acc + parseInt(c.credit_hours || 0), 0)}</span>
+                <div className={styles.statCard}>
+                    <span className={styles.statIcon}>⏱️</span>
+                    <span className={styles.statLabel}>Total Credits</span>
+                    <span className={styles.statValue}>{courses.reduce((acc, c) => acc + parseInt(c.credit_hours || 0), 0)}</span>
                 </div>
-                <div className="stat-card card-orange">
-                    <span className="stat-icon" style={{color: '#f59e0b'}}>🔬</span>
-                    <span className="stat-label">Lab Courses</span>
-                    <span className="stat-value">{courses.filter(c => c.course_type === 'Lab').length}</span>
+                <div className={styles.statCard}>
+                    <span className={styles.statIcon}>🔬</span>
+                    <span className={styles.statLabel}>Lab Courses</span>
+                    <span className={styles.statValue}>{courses.filter(c => c.course_type === 'Lab').length}</span>
                 </div>
-                <div className="stat-card card-pink">
-                    <span className="stat-icon" style={{color: '#ec4899'}}>👨‍🏫</span>
-                    <span className="stat-label">Unassigned</span>
-                    <span className="stat-value">{courses.filter(c => !c.Teacher?.name).length}</span>
+                <div className={styles.statCard}>
+                    <span className={styles.statIcon}>👨‍🏫</span>
+                    <span className={styles.statLabel}>Unassigned</span>
+                    <span className={styles.statValue}>{courses.filter(c => !c.Teacher?.name).length}</span>
                 </div>
             </div>
 
-            {error && <div className="error-message">{error}</div>}
+            {error && <div className={styles.errorMessage}>{error}</div>}
 
-            <div className="table-container">
-                <div className="table-header-actions">
-                    <div className="search-input-wrapper">
-                        <span className="search-icon">🔍</span>
+            <div className={styles.tableContainer}>
+                <div className={styles.tableHeaderActions}>
+                    <div className={styles.searchInputWrapper}>
+                        <span className={styles.searchIcon}>🔍</span>
                         <input
                             type="text"
                             placeholder="Search courses..."
@@ -165,19 +156,22 @@ const Courses = () => {
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <span className="results-count">{filteredCourses.length} of {courses.length} results</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <span className={styles.resultsCount}>{filteredCourses.length} of {courses.length} results</span>
+                        <button onClick={() => setShowAddModal(true)} style={{
+                            padding: '10px 20px', borderRadius: '12px', background: 'var(--admin-accent)', color: 'white', border: 'none', fontWeight: '700', cursor: 'pointer'
+                        }}>+ Add Course</button>
+                    </div>
                 </div>
 
-                <table className="data-table">
+                <table className={styles.dataTable}>
                     <thead>
                         <tr>
                             <th>COURSE</th>
                             <th>CODE</th>
                             <th>CREDITS</th>
-                            <th>DEPARTMENT</th>
                             <th>TYPE</th>
                             <th>SEMESTER</th>
-                            <th>TEACHER</th>
                             <th>ACTIONS</th>
                         </tr>
                     </thead>
@@ -185,14 +179,13 @@ const Courses = () => {
                         {filteredCourses.map((course, index) => {
                             const colors = ['purple', 'blue', 'green', 'orange', 'pink'];
                             const color = colors[index % colors.length];
-                            
                             const typeColor = course.course_type === 'Lab' ? 'pink' : course.course_type === 'Practical' ? 'orange' : course.course_type === 'Elective' ? 'blue' : 'green';
 
                             return (
                                 <tr key={course.course_code}>
                                     <td>
-                                        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
-                                            <div style={{width: '32px', height: '32px', borderRadius: '8px', background: `var(--card-${color})`, color: `var(--text-${color}-dark, #333)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 'bold'}}>
+                                        <div className={styles.courseCell}>
+                                            <div className={styles.courseIcon} style={{ background: `var(--card-${color})`, color: `var(--text-${color}-dark)` }}>
                                                 📚
                                             </div>
                                             <strong>{course.name}</strong>
@@ -200,20 +193,10 @@ const Courses = () => {
                                     </td>
                                     <td><code><strong>{course.course_code}</strong></code></td>
                                     <td>{course.credit_hours} cr</td>
-                                    <td><span className={`badge badge-${color}`}>{course.Department?.name || 'N/A'}</span></td>
-                                    <td><span className={`badge badge-${typeColor}`}>{course.course_type || 'Theory'}</span></td>
+                                    <td><span className={styles.badge} style={{ background: `var(--card-${typeColor})`, color: `var(--text-${typeColor}-dark)` }}>{course.course_type || 'Theory'}</span></td>
                                     <td>Sem {course.semester}</td>
-                                    <td><span style={{color: '#64748b'}}>👨‍🏫 {course.Teacher?.name || 'Unassigned'}</span></td>
                                     <td>
-                                        <button
-                                            className="btn-icon btn-danger"
-                                            onClick={() => {
-                                                setSelectedCourse(course);
-                                                setShowDeleteModal(true);
-                                            }}
-                                        >
-                                            🗑️
-                                        </button>
+                                        <button onClick={() => { setSelectedCourse(course); setShowDeleteModal(true); }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontWeight: '600' }}>Delete</button>
                                     </td>
                                 </tr>
                             );
@@ -221,20 +204,19 @@ const Courses = () => {
                     </tbody>
                 </table>
                 {filteredCourses.length === 0 && (
-                    <div className="empty-state">No courses found</div>
+                    <div className={styles.emptyState}>No courses found</div>
                 )}
             </div>
 
-            {/* Add Course Modal */}
             <ConfirmModal
                 isOpen={showAddModal}
                 onClose={() => setShowAddModal(false)}
                 onConfirm={handleAddCourse}
                 title="Add Course"
                 message={
-                    <div className="modal-form">
-                        <div className="form-row">
-                            <div className="form-group">
+                    <div className={styles.modalForm}>
+                        <div className={styles.formRow}>
+                            <div className={styles.formGroup}>
                                 <label>Course Code:</label>
                                 <input
                                     type="text"
@@ -243,7 +225,7 @@ const Courses = () => {
                                     placeholder="CS-301"
                                 />
                             </div>
-                            <div className="form-group">
+                            <div className={styles.formGroup}>
                                 <label>Course Name:</label>
                                 <input
                                     type="text"
@@ -253,8 +235,8 @@ const Courses = () => {
                                 />
                             </div>
                         </div>
-                        <div className="form-row">
-                            <div className="form-group">
+                        <div className={styles.formRow}>
+                            <div className={styles.formGroup}>
                                 <label>Credit Hours:</label>
                                 <select
                                     value={formData.credit_hours}
@@ -266,7 +248,7 @@ const Courses = () => {
                                     <option value="4">4 Credits</option>
                                 </select>
                             </div>
-                            <div className="form-group">
+                            <div className={styles.formGroup}>
                                 <label>Department:</label>
                                 <select
                                     value={formData.department_id}
@@ -281,8 +263,8 @@ const Courses = () => {
                                 </select>
                             </div>
                         </div>
-                        <div className="form-row">
-                            <div className="form-group">
+                        <div className={styles.formRow}>
+                            <div className={styles.formGroup}>
                                 <label>Course Type:</label>
                                 <select
                                     value={formData.course_type}
@@ -293,7 +275,7 @@ const Courses = () => {
                                     ))}
                                 </select>
                             </div>
-                            <div className="form-group">
+                            <div className={styles.formGroup}>
                                 <label>Semester:</label>
                                 <select
                                     value={formData.semester}
@@ -305,7 +287,7 @@ const Courses = () => {
                                 </select>
                             </div>
                         </div>
-                        <div className="form-group">
+                        <div className={styles.formGroup}>
                             <label>Teacher (Optional):</label>
                             <select
                                 value={formData.teacher_id}
@@ -325,13 +307,12 @@ const Courses = () => {
                 confirmVariant="primary"
             />
 
-            {/* Delete Modal */}
             <ConfirmModal
                 isOpen={showDeleteModal}
                 onClose={() => setShowDeleteModal(false)}
                 onConfirm={handleDeleteCourse}
                 title="Delete Course"
-                message={`Are you sure you want to delete "${selectedCourse?.course_code} - ${selectedCourse?.name}"? This will also remove it from all schedules.`}
+                message={`Are you sure you want to delete "${selectedCourse?.course_code} - ${selectedCourse?.name}"? This action cannot be undone.`}
                 confirmText="Delete"
                 confirmVariant="danger"
             />

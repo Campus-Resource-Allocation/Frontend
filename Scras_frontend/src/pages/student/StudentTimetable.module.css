@@ -1,0 +1,252 @@
+.container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: var(--text-muted, #64748b);
+  font-size: 14px;
+}
+
+.nowInClass {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.nowInClassLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted, #64748b);
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.nowInClassValue {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.nowInClassIcon {
+  font-size: 20px;
+  color: #7c3aed;
+}
+
+.errorBox {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.gridContainer {
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.trHeader {
+  background: var(--bg-sidebar);
+}
+
+.thTime {
+  width: 100px;
+  padding: 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted, #64748b);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.thDay {
+  padding: 16px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted, #475569);
+  border-left: 1px solid var(--border-color);
+  border-bottom: 2px solid var(--border-color);
+  background: transparent;
+}
+
+.thDayToday {
+  color: #7c3aed;
+  background: var(--bg-sidebar-active);
+}
+
+.todayIndicator {
+  width: 6px;
+  height: 6px;
+  background: #7c3aed;
+  border-radius: 50%;
+  margin: 6px auto 0;
+}
+
+.trRow {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tdTime {
+  padding: 16px;
+  font-size: 13px;
+  color: var(--text-muted, #64748b);
+  font-weight: 600;
+  text-align: left;
+  height: 140px;
+  vertical-align: top;
+  background: var(--card-bg);
+}
+
+.tdDay {
+  height: 140px;
+  vertical-align: top;
+  padding: 8px;
+  border-left: 1px solid var(--border-color);
+  background: transparent;
+  position: relative;
+}
+
+.tdDayToday {
+  background: var(--bg-sidebar-active);
+}
+
+.classCard {
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 4px;
+  transition: all 0.2s ease;
+}
+
+.classCardLive {
+  box-shadow: 0 4px 12px rgba(124,58,237,0.15);
+}
+
+.classCardNormal {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.courseCode {
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 2px;
+}
+
+.courseName {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.75;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.roomNumber {
+  font-size: 10px;
+  color: var(--text-muted, #64748b);
+  font-weight: 600;
+}
+
+.liveIndicator {
+  font-size: 9px;
+  font-weight: 800;
+  color: #7c3aed;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pulseDot {
+  width: 6px;
+  height: 6px;
+  background: #7c3aed;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.legend {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  gap: 24px;
+  background: var(--card-bg);
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legendText {
+  font-size: 12px;
+  color: var(--text-muted, #475569);
+  font-weight: 600;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-color, #eef2f6);
+  border-top-color: #7c3aed;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

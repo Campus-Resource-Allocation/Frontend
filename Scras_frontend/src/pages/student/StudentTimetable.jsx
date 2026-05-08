@@ -1,10 +1,12 @@
 /**
  * Student Timetable (My Schedule) Page
  * ✅ FIXED: Proper height based on class duration
+ * ✅ FIXED: Refactored inline CSS to CSS Modules
  */
 
 import React, { useState, useEffect } from 'react';
 import { getMyTimetable, findMyCurrentClass } from '../../services/student_service';
+import styles from './StudentTimetable.module.css';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 const DAY_FULL = {
@@ -25,10 +27,10 @@ const fmt12 = (h) => {
 };
 
 const COURSE_COLORS = [
-  { bg: '#ecf3f0', text: '#2d6a4f', border: '#b7e4c7' },
-  { bg: '#fdfcf0', text: '#b5838d', border: '#ffb4a2' },
-  { bg: '#f0f4fd', text: '#1e293b', border: '#cbd5e1' },
-  { bg: '#fff5f5', text: '#e53e3e', border: '#feb2b2' },
+  { bg: 'var(--course-1-bg, #ecf3f0)', text: 'var(--course-1-text, #2d6a4f)', border: 'var(--course-1-border, #b7e4c7)' },
+  { bg: 'var(--course-2-bg, #fdfcf0)', text: 'var(--course-2-text, #b5838d)', border: 'var(--course-2-border, #ffb4a2)' },
+  { bg: 'var(--course-3-bg, #f0f4fd)', text: 'var(--course-3-text, #1e293b)', border: 'var(--course-3-border, #cbd5e1)' },
+  { bg: 'var(--course-4-bg, #fff5f5)', text: 'var(--course-4-text, #e53e3e)', border: 'var(--course-4-border, #feb2b2)' },
 ];
 
 const StudentTimetable = () => {
@@ -134,146 +136,54 @@ const StudentTimetable = () => {
 
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '60vh',
-        flexDirection: 'column',
-        gap: '16px'
-      }}>
-        <div style={{
-          width: '40px',
-          height: '40px',
-          border: '3px solid #eef2f6',
-          borderTopColor: '#7c3aed',
-          borderRadius: '50%',
-          animation: 'spin 0.8s linear infinite'
-        }}></div>
-        <span style={{ color: '#64748b', fontSize: '14px' }}>
-          Loading your weekly schedule...
-        </span>
+      <div className={styles.loadingContainer}>
+        <div className={styles.spinner}></div>
+        <span className={styles.subtitle}>Loading your weekly schedule...</span>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '24px', maxWidth: '1400px', margin: '0 auto' }}>
+    <div className={styles.container}>
       {/* Header */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        marginBottom: '32px'
-      }}>
+      <div className={styles.header}>
         <div>
-          <h1 style={{
-            fontSize: '28px',
-            fontWeight: '800',
-            color: '#1e293b',
-            marginBottom: '8px'
-          }}>
-            My Schedule
-          </h1>
-          <p style={{ color: '#64748b', fontSize: '14px' }}>
-            Weekly class schedule · {schedule.length} sessions
-          </p>
+          <h1 className={styles.title}>My Schedule</h1>
+          <p className={styles.subtitle}>Weekly class schedule · {schedule.length} sessions</p>
         </div>
 
         {currentClass && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            background: '#f0f4fd',
-            border: '1px solid #cbd5e1',
-            padding: '12px 20px',
-            borderRadius: '12px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
-          }}>
+          <div className={styles.nowInClass}>
             <div>
-              <div style={{
-                fontSize: '10px',
-                fontWeight: '700',
-                color: '#64748b',
-                letterSpacing: '0.05em',
-                marginBottom: '2px'
-              }}>
-                NOW IN CLASS
-              </div>
-              <div style={{ fontSize: '14px', fontWeight: '800', color: '#1e293b' }}>
+              <div className={styles.nowInClassLabel}>NOW IN CLASS</div>
+              <div className={styles.nowInClassValue}>
                 {currentClass.course_code} · {currentClass.room_number}
               </div>
             </div>
-            <span style={{ fontSize: '20px', color: '#7c3aed' }}>✦</span>
+            <span className={styles.nowInClassIcon}>✦</span>
           </div>
         )}
       </div>
 
       {error && (
-        <div style={{
-          background: '#fef2f2',
-          border: '1px solid #fecaca',
-          color: '#b91c1c',
-          padding: '14px 18px',
-          borderRadius: '12px',
-          marginBottom: '20px',
-          fontSize: '14px'
-        }}>
+        <div className={styles.errorBox}>
           ⚠ {error}
         </div>
       )}
 
       {/* Timetable Grid */}
-      <div style={{
-        background: 'var(--card-bg)',
-        borderRadius: '16px',
-        border: '1px solid #e2e8f0',
-        overflow: 'hidden',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.04)'
-      }}>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            minWidth: '900px'
-          }}>
+      <div className={styles.gridContainer}>
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
             <thead>
-              <tr style={{ background: '#f8fafc' }}>
-                <th style={{
-                  width: '100px',
-                  padding: '16px',
-                  textAlign: 'left',
-                  fontSize: '12px',
-                  fontWeight: '700',
-                  color: '#64748b',
-                  borderBottom: '2px solid #e2e8f0'
-                }}>
-                  Time
-                </th>
+              <tr className={styles.trHeader}>
+                <th className={styles.thTime}>Time</th>
                 {DAYS.map(day => {
                   const isToday = day === today;
                   return (
-                    <th key={day} style={{
-                      padding: '16px',
-                      textAlign: 'center',
-                      fontSize: '14px',
-                      fontWeight: '700',
-                      color: isToday ? '#7c3aed' : '#475569',
-                      borderLeft: '1px solid #e2e8f0',
-                      borderBottom: '2px solid #e2e8f0',
-                      background: isToday ? '#faf5ff' : 'transparent'
-                    }}>
+                    <th key={day} className={`${styles.thDay} ${isToday ? styles.thDayToday : ''}`}>
                       {day}
-                      {isToday && (
-                        <div style={{
-                          width: '6px',
-                          height: '6px',
-                          background: '#7c3aed',
-                          borderRadius: '50%',
-                          margin: '6px auto 0'
-                        }}></div>
-                      )}
+                      {isToday && <div className={styles.todayIndicator}></div>}
                     </th>
                   );
                 })}
@@ -282,20 +192,9 @@ const StudentTimetable = () => {
 
             <tbody>
               {HOURS.map(hour => (
-                <tr key={hour} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                <tr key={hour} className={styles.trRow}>
                   {/* Time Label */}
-                  <td style={{
-                    padding: '16px',
-                    fontSize: '13px',
-                    color: '#64748b',
-                    fontWeight: '600',
-                    textAlign: 'left',
-                    height: '140px', // Fixed height for 2-hour slot
-                    verticalAlign: 'top',
-                    background: '#fafbfc'
-                  }}>
-                    {fmt12(hour)}
-                  </td>
+                  <td className={styles.tdTime}>{fmt12(hour)}</td>
 
                   {/* Day Cells */}
                   {DAYS.map(day => {
@@ -303,14 +202,7 @@ const StudentTimetable = () => {
                     const isToday = day === today;
 
                     return (
-                      <td key={day} style={{
-                        height: '140px', // Fixed height for 2-hour slot
-                        verticalAlign: 'top',
-                        padding: '8px',
-                        borderLeft: '1px solid #f1f5f9',
-                        background: isToday ? '#fafafa' : 'transparent',
-                        position: 'relative'
-                      }}>
+                      <td key={day} className={`${styles.tdDay} ${isToday ? styles.tdDayToday : ''}`}>
                         {classes.map((cls, i) => {
                           const colors = colorMap[cls.course_code] || COURSE_COLORS[0];
                           const isLive = currentClass?.course_code === cls.course_code;
@@ -318,64 +210,28 @@ const StudentTimetable = () => {
                           const heightPercent = getHeightPercentage(durationHours);
 
                           return (
-                            <div key={i} style={{
-                              background: isLive ? '#f0f4fd' : colors.bg,
-                              border: `1.5px solid ${isLive ? '#7c3aed' : colors.border}`,
-                              borderRadius: '10px',
-                              padding: '10px',
-                              height: `${heightPercent}%`, // ✅ Dynamic height based on duration
-                              display: 'flex',
-                              flexDirection: 'column',
-                              justifyContent: 'center',
-                              boxShadow: isLive ? '0 4px 12px rgba(124,58,237,0.15)' : '0 2px 4px rgba(0,0,0,0.02)',
-                              marginBottom: '4px',
-                              transition: 'all 0.2s ease'
-                            }}>
-                              <div style={{
-                                fontSize: '13px',
-                                fontWeight: '800',
-                                color: colors.text,
-                                marginBottom: '2px'
+                            <div key={i} 
+                              className={`${styles.classCard} ${isLive ? styles.classCardLive : styles.classCardNormal}`}
+                              style={{
+                                background: isLive ? 'var(--bg-sidebar-active)' : colors.bg,
+                                border: `1.5px solid ${isLive ? '#7c3aed' : colors.border}`,
+                                height: `${heightPercent}%`
                               }}>
+                              <div className={styles.courseCode} style={{ color: colors.text }}>
                                 {cls.course_code}
                               </div>
 
-                              <div style={{
-                                fontSize: '11px',
-                                fontWeight: '600',
-                                color: colors.text,
-                                opacity: 0.75,
-                                marginBottom: '4px',
-                                lineHeight: '1.3'
-                              }}>
+                              <div className={styles.courseName} style={{ color: colors.text }}>
                                 {cls.course_name}
                               </div>
 
-                              <div style={{
-                                fontSize: '10px',
-                                color: '#64748b',
-                                fontWeight: '600'
-                              }}>
+                              <div className={styles.roomNumber}>
                                 📍 {cls.room_number}
                               </div>
 
                               {isLive && (
-                                <div style={{
-                                  fontSize: '9px',
-                                  fontWeight: '800',
-                                  color: '#7c3aed',
-                                  marginTop: '6px',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '4px'
-                                }}>
-                                  <span style={{
-                                    width: '6px',
-                                    height: '6px',
-                                    background: '#7c3aed',
-                                    borderRadius: '50%',
-                                    animation: 'pulse 2s infinite'
-                                  }}></span>
+                                <div className={styles.liveIndicator}>
+                                  <span className={styles.pulseDot}></span>
                                   LIVE NOW
                                 </div>
                               )}
@@ -392,65 +248,23 @@ const StudentTimetable = () => {
         </div>
 
         {/* Footer Legend */}
-        <div style={{
-          padding: '16px 24px',
-          borderTop: '1px solid #e2e8f0',
-          display: 'flex',
-          gap: '24px',
-          background: '#f8fafc',
-          flexWrap: 'wrap'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{
-              width: '12px',
-              height: '12px',
-              background: '#f0f4fd',
-              border: '1.5px solid #7c3aed',
-              borderRadius: '3px'
-            }}></div>
-            <span style={{ fontSize: '12px', color: '#475569', fontWeight: '600' }}>
-              Current class
-            </span>
+        <div className={styles.legend}>
+          <div className={styles.legendItem}>
+            <div style={{ width: '12px', height: '12px', background: '#f0f4fd', border: '1.5px solid #7c3aed', borderRadius: '3px' }}></div>
+            <span className={styles.legendText}>Current class</span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{
-              width: '12px',
-              height: '12px',
-              background: '#ecf3f0',
-              border: '1.5px solid #b7e4c7',
-              borderRadius: '3px'
-            }}></div>
-            <span style={{ fontSize: '12px', color: '#475569', fontWeight: '600' }}>
-              Scheduled class
-            </span>
+          <div className={styles.legendItem}>
+            <div style={{ width: '12px', height: '12px', background: '#ecf3f0', border: '1.5px solid #b7e4c7', borderRadius: '3px' }}></div>
+            <span className={styles.legendText}>Scheduled class</span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{
-              width: '12px',
-              height: '12px',
-              background: '#fafafa',
-              border: '1.5px solid #d1d5db',
-              borderRadius: '3px'
-            }}></div>
-            <span style={{ fontSize: '12px', color: '#475569', fontWeight: '600' }}>
-              Today's column
-            </span>
+          <div className={styles.legendItem}>
+            <div style={{ width: '12px', height: '12px', background: 'var(--card-bg)', border: '1.5px solid var(--border-color)', borderRadius: '3px' }}></div>
+            <span className={styles.legendText}>Today's column</span>
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-        
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-      `}</style>
     </div>
   );
 };

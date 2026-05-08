@@ -1,0 +1,107 @@
+.dashboardHeader {
+    margin-bottom: 32px;
+}
+
+.dashboardHeader h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.dashboardHeader p {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+}
+
+.statCard {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.statCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.statIcon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.statInfo h3 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.statInfo p {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin: 4px 0 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Color variations */
+.statBlue { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.statGreen { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.statPurple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+.statOrange { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.statRed { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+.quickActions h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+}
+
+.actionButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.actionBtn {
+    padding: 12px 24px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.actionBtn:hover {
+    background: var(--admin-accent);
+    color: white;
+    border-color: var(--admin-accent);
+    transform: translateY(-2px);
+}

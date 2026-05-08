@@ -1,0 +1,221 @@
+.container {
+    padding: 0;
+}
+
+.header {
+    margin-bottom: 32px;
+}
+
+.title h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.title p {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.statCard {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 24px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.statCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.statCardActive {
+    border-color: var(--admin-accent);
+    background: rgba(124, 58, 237, 0.02);
+}
+
+.statIcon {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.statLabel {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.statValue {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.tableContainer {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.tableHeader {
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tableHeader h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.resultsCount {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.dataTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dataTable th {
+    text-align: left;
+    padding: 16px 24px;
+    background: var(--bg-page);
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.dataTable td {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.requesterCell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.dateTimeCell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.timeSubtext {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.statusDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.actionButtons {
+    display: flex;
+    gap: 8px;
+}
+
+.approveBtn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: #10b981;
+    color: white;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.approveBtn:hover {
+    background: #059669;
+}
+
+.rejectBtn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rejectBtn:hover {
+    background: #dc2626;
+}
+
+.processedText {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-style: italic;
+}
+
+.errorMessage {
+    padding: 12px 24px;
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.emptyState {
+    padding: 64px;
+    text-align: center;
+    color: var(--text-muted);
+}

@@ -4,12 +4,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { getTeachers, createTeacher, deleteTeacher } from '../../services/admin_service';
-import { getDepartments } from '../../services/admin_service';
-import SearchBar from '../../components/common/SearchBar';
-import StatusBadge from '../../components/common/StatusBadge';
+import { getTeachers, createTeacher, deleteTeacher, getDepartments } from '../../services/admin_service';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ConfirmModal from '../../components/common/ConfirmModal';
+import styles from './Teachers.module.css';
 
 const Teachers = () => {
     const [teachers, setTeachers] = useState([]);
@@ -23,7 +21,7 @@ const Teachers = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        password: 'password123', // Added default password
+        password: 'password123',
         department_id: ''
     });
     const [error, setError] = useState('');
@@ -43,12 +41,8 @@ const Teachers = () => {
             getDepartments()
         ]);
 
-        if (teachersRes.success) {
-            setTeachers(teachersRes.data || []);
-        }
-        if (deptsRes.success) {
-            setDepartments(deptsRes.data || []);
-        }
+        if (teachersRes.success) setTeachers(teachersRes.data || []);
+        if (deptsRes.success) setDepartments(deptsRes.data || []);
         setLoading(false);
     };
 
@@ -73,7 +67,7 @@ const Teachers = () => {
         const result = await createTeacher(formData);
         if (result.success) {
             setShowAddModal(false);
-            setFormData({ name: '', email: '', department_id: '' });
+            setFormData({ name: '', email: '', password: 'password123', department_id: '' });
             fetchData();
         } else {
             setError(result.message);
@@ -82,7 +76,6 @@ const Teachers = () => {
 
     const handleDeleteTeacher = async () => {
         if (!selectedTeacher) return;
-
         const result = await deleteTeacher(selectedTeacher.teacher_id);
         if (result.success) {
             setShowDeleteModal(false);
@@ -96,41 +89,41 @@ const Teachers = () => {
     if (loading) return <LoadingSpinner />;
 
     return (
-        <div className="teachers-page">
-            <div className="page-header">
-                <div className="page-title">
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <div className={styles.title}>
                     <h1>Teachers</h1>
                     <p>{teachers.length} faculty members · {teachers.length - 1 || 1} active</p>
                 </div>
-                <button className="btn-primary" onClick={() => setShowAddModal(true)}>
-                    + Add Teacher
-                </button>
+                <button onClick={() => setShowAddModal(true)} style={{
+                    padding: '10px 20px', borderRadius: '12px', background: 'var(--admin-accent)', color: 'white', border: 'none', fontWeight: '700', cursor: 'pointer'
+                }}>+ Add Teacher</button>
             </div>
 
-            <div className="stats-grid" style={{gridTemplateColumns: 'repeat(3, 1fr)'}}>
-                <div className="stat-card card-peach">
-                    <span className="stat-icon" style={{color: '#8b5cf6'}}>👨‍🏫</span>
-                    <span className="stat-label">Total Faculty</span>
-                    <span className="stat-value">{teachers.length}</span>
+            <div className={styles.statsGrid}>
+                <div className={styles.statCard}>
+                    <span className={styles.statIcon}>👨‍🏫</span>
+                    <span className={styles.statLabel}>Total Faculty</span>
+                    <span className={styles.statValue}>{teachers.length}</span>
                 </div>
-                <div className="stat-card card-orange">
-                    <span className="stat-icon" style={{color: '#10b981'}}>✅</span>
-                    <span className="stat-label">Active Now</span>
-                    <span className="stat-value">{teachers.length - 1 || 1}</span>
+                <div className={styles.statCard}>
+                    <span className={styles.statIcon}>✅</span>
+                    <span className={styles.statLabel}>Active Now</span>
+                    <span className={styles.statValue}>{teachers.length - 1 || 1}</span>
                 </div>
-                <div className="stat-card card-yellow">
-                    <span className="stat-icon" style={{color: '#f59e0b'}}>📚</span>
-                    <span className="stat-label">Total Courses</span>
-                    <span className="stat-value">14</span>
+                <div className={styles.statCard}>
+                    <span className={styles.statIcon}>📚</span>
+                    <span className={styles.statLabel}>Total Courses</span>
+                    <span className={styles.statValue}>14</span>
                 </div>
             </div>
 
-            {error && <div className="error-message">{error}</div>}
+            {error && <div className={styles.errorMessage}>{error}</div>}
 
-            <div className="table-container">
-                <div className="table-header-actions">
-                    <div className="search-input-wrapper">
-                        <span className="search-icon">🔍</span>
+            <div className={styles.tableContainer}>
+                <div className={styles.tableHeaderActions}>
+                    <div className={styles.searchInputWrapper}>
+                        <span className={styles.searchIcon}>🔍</span>
                         <input
                             type="text"
                             placeholder="Search teachers..."
@@ -138,10 +131,10 @@ const Teachers = () => {
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <span className="results-count">{filteredTeachers.length} of {teachers.length} results</span>
+                    <span className={styles.resultsCount}>{filteredTeachers.length} of {teachers.length} results</span>
                 </div>
 
-                <table className="data-table">
+                <table className={styles.dataTable}>
                     <thead>
                         <tr>
                             <th>FACULTY MEMBER</th>
@@ -158,7 +151,6 @@ const Teachers = () => {
                             const color = colors[index % colors.length];
                             const initials = teacher.name ? teacher.name.replace('Dr. ', '').split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase() : 'FC';
                             
-                            // Mocking courses
                             const courses = Math.floor(Math.random() * 4) + 1;
                             const status = index % 4 === 0 ? 'On Leave' : 'Active';
                             const statusColor = status === 'Active' ? 'green' : 'orange';
@@ -166,31 +158,23 @@ const Teachers = () => {
                             return (
                                 <tr key={teacher.teacher_id}>
                                     <td>
-                                        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
-                                            <div style={{width: '32px', height: '32px', borderRadius: '50%', background: `var(--card-${color})`, color: `var(--text-${color}-dark, #333)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold'}}>
+                                        <div className={styles.teacherCell}>
+                                            <div className={styles.avatar} style={{ background: `var(--card-${color})`, color: `var(--text-${color}-dark)` }}>
                                                 {initials}
                                             </div>
                                             <strong>{teacher.name}</strong>
                                         </div>
                                     </td>
-                                    <td><span className={`badge badge-${color}`}>{teacher.Department?.name || 'N/A'}</span></td>
-                                    <td><span style={{color: '#64748b'}}>✉️ {teacher.email}</span></td>
-                                    <td><span style={{color: '#64748b'}}>📖 {courses}</span></td>
+                                    <td><span className={styles.badge} style={{ background: `var(--card-${color})`, color: `var(--text-${color}-dark)` }}>{teacher.Department?.name || 'N/A'}</span></td>
+                                    <td><span className={styles.mutedText}>✉️ {teacher.email}</span></td>
+                                    <td><span className={styles.mutedText}>📖 {courses}</span></td>
                                     <td>
-                                        <span className={`badge badge-${statusColor}`}>
-                                            <span className="status-dot"></span> {status}
+                                        <span className={styles.badge} style={{ background: `var(--card-${statusColor})`, color: `var(--text-${statusColor}-dark)` }}>
+                                            <span className={styles.statusDot}></span> {status}
                                         </span>
                                     </td>
                                     <td>
-                                        <button
-                                            className="btn-icon btn-danger"
-                                            onClick={() => {
-                                                setSelectedTeacher(teacher);
-                                                setShowDeleteModal(true);
-                                            }}
-                                        >
-                                            🗑️
-                                        </button>
+                                        <button onClick={() => { setSelectedTeacher(teacher); setShowDeleteModal(true); }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontWeight: '600' }}>Delete</button>
                                     </td>
                                 </tr>
                             );
@@ -198,19 +182,18 @@ const Teachers = () => {
                     </tbody>
                 </table>
                 {filteredTeachers.length === 0 && (
-                    <div className="empty-state">No teachers found</div>
+                    <div className={styles.emptyState}>No teachers found</div>
                 )}
             </div>
 
-            {/* Add Teacher Modal */}
             <ConfirmModal
                 isOpen={showAddModal}
                 onClose={() => setShowAddModal(false)}
                 onConfirm={handleAddTeacher}
                 title="Add Teacher"
                 message={
-                    <div className="modal-form">
-                        <div className="form-group">
+                    <div className={styles.modalForm}>
+                        <div className={styles.formGroup}>
                             <label>Name:</label>
                             <input
                                 type="text"
@@ -219,7 +202,7 @@ const Teachers = () => {
                                 placeholder="Dr. John Doe"
                             />
                         </div>
-                        <div className="form-group">
+                        <div className={styles.formGroup}>
                             <label>Email:</label>
                             <input
                                 type="email"
@@ -228,7 +211,7 @@ const Teachers = () => {
                                 placeholder="john.doe@university.edu"
                             />
                         </div>
-                        <div className="form-group">
+                        <div className={styles.formGroup}>
                             <label>Password:</label>
                             <input
                                 type="password"
@@ -237,7 +220,7 @@ const Teachers = () => {
                                 placeholder="Enter login password"
                             />
                         </div>
-                        <div className="form-group">
+                        <div className={styles.formGroup}>
                             <label>Department:</label>
                             <select
                                 value={formData.department_id}
@@ -257,7 +240,6 @@ const Teachers = () => {
                 confirmVariant="primary"
             />
 
-            {/* Delete Modal */}
             <ConfirmModal
                 isOpen={showDeleteModal}
                 onClose={() => setShowDeleteModal(false)}

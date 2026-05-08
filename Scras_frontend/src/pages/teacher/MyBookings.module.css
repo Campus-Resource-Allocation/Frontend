@@ -1,0 +1,220 @@
+.header {
+    margin-bottom: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.header p {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.bookBtn {
+    background: #7c3aed;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3);
+    transition: all 0.2s;
+}
+
+.bookBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 20px -3px rgba(124, 58, 237, 0.4);
+}
+
+.alert {
+    padding: 14px 20px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.alertSuccess {
+    background: #f0fdf4;
+    border: 1px solid #dcfce7;
+    color: #15803d;
+}
+
+.alertError {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+}
+
+.closeBtn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: inherit;
+    padding: 0 8px;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.statCard {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.statIconWrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.statValue {
+    font-size: 28px;
+    font-weight: 900;
+    margin: 0;
+}
+
+.statLabel {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0.02em;
+}
+
+.tableCard {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+}
+
+.emptyState {
+    text-align: center;
+    padding: 80px 0;
+    color: var(--text-muted);
+}
+
+.emptyIcon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.tableHeader {
+    background: var(--bg-page);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tableHeader th {
+    text-align: left;
+    padding: 16px 24px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 800;
+    letter-spacing: 0.06em;
+}
+
+.roomCell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.roomNumber {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.roomType {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.dateTimeCell {
+    display: flex;
+    flex-direction: column;
+}
+
+.dateText {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.timeText {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.purposeText {
+    font-size: 13px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.statusDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--border-color);
+    border-top-color: #7c3aed;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+[data-theme='dark'] .tableHeader {
+    background: rgba(255, 255, 255, 0.02);
+}

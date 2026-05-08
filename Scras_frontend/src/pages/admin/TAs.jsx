@@ -4,16 +4,15 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { getTAs, createTA, deleteTA } from '../../services/admin_service';
-import { getDepartments, getTeachers } from '../../services/admin_service';
-import SearchBar from '../../components/common/SearchBar';
+import { getTAs, createTA, deleteTA, getDepartments, getTeachers } from '../../services/admin_service';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ConfirmModal from '../../components/common/ConfirmModal';
+import styles from './TAs.module.css';
 
 const TAs = () => {
     const [tas, setTAs] = useState([]);
     const [departments, setDepartments] = useState([]);
-    const [teachers, setTeachers] = useState([]); // ✅ Added
+    const [teachers, setTeachers] = useState([]);
     const [filteredTAs, setFilteredTAs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -24,9 +23,9 @@ const TAs = () => {
         name: '',
         email: '',
         password: 'password123',
-        roll_number: '', // ✅ Added
+        roll_number: '',
         department_id: '',
-        teacher_email: '' // ✅ Changed from teacher_id
+        teacher_email: ''
     });
     const [error, setError] = useState('');
 
@@ -43,18 +42,12 @@ const TAs = () => {
         const [tasRes, deptsRes, teachersRes] = await Promise.all([
             getTAs(),
             getDepartments(),
-            getTeachers() // ✅ Added
+            getTeachers()
         ]);
 
-        if (tasRes.success) {
-            setTAs(tasRes.data || []);
-        }
-        if (deptsRes.success) {
-            setDepartments(deptsRes.data || []);
-        }
-        if (teachersRes.success) {
-            setTeachers(teachersRes.data || []); // ✅ Added
-        }
+        if (tasRes.success) setTAs(tasRes.data || []);
+        if (deptsRes.success) setDepartments(deptsRes.data || []);
+        if (teachersRes.success) setTeachers(teachersRes.data || []);
         setLoading(false);
     };
 
@@ -72,14 +65,11 @@ const TAs = () => {
     };
 
     const handleAddTA = async () => {
-        console.log("📤 Form data before validation:", formData);
-
         if (!formData.name || !formData.email || !formData.roll_number || !formData.department_id || !formData.teacher_email) {
             setError('All fields are required');
             return;
         }
 
-        // ✅ Convert department_id to integer
         const dataToSend = {
             name: formData.name,
             email: formData.email,
@@ -89,12 +79,7 @@ const TAs = () => {
             teacher_email: formData.teacher_email
         };
 
-        console.log("📤 Data being sent to backend:", dataToSend);
-
         const result = await createTA(dataToSend);
-        
-        console.log("📬 Response from backend:", result);
-
         if (result.success) {
             setShowAddModal(false);
             setFormData({
@@ -114,7 +99,6 @@ const TAs = () => {
 
     const handleDeleteTA = async () => {
         if (!selectedTA) return;
-
         const result = await deleteTA(selectedTA.ta_id);
         if (result.success) {
             setShowDeleteModal(false);
@@ -128,41 +112,41 @@ const TAs = () => {
     if (loading) return <LoadingSpinner />;
 
     return (
-        <div className="teachers-page">
-            <div className="page-header">
-                <div className="page-title">
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <div className={styles.title}>
                     <h1>Teaching Assistants</h1>
                     <p>{tas.length} TAs currently assisting</p>
                 </div>
-                <button className="btn-primary" onClick={() => setShowAddModal(true)}>
-                    + Add TA
-                </button>
+                <button onClick={() => setShowAddModal(true)} style={{
+                    padding: '10px 20px', borderRadius: '12px', background: 'var(--admin-accent)', color: 'white', border: 'none', fontWeight: '700', cursor: 'pointer'
+                }}>+ Add TA</button>
             </div>
 
-            <div className="stats-grid" style={{gridTemplateColumns: 'repeat(3, 1fr)'}}>
-                <div className="stat-card card-blue">
-                    <span className="stat-icon" style={{color: '#3b82f6'}}>🎓</span>
-                    <span className="stat-label">Total TAs</span>
-                    <span className="stat-value">{tas.length}</span>
+            <div className={styles.statsGrid}>
+                <div className={styles.statCard}>
+                    <span className={styles.statIcon}>🎓</span>
+                    <span className={styles.statLabel}>Total TAs</span>
+                    <span className={styles.statValue}>{tas.length}</span>
                 </div>
-                <div className="stat-card card-green">
-                    <span className="stat-icon" style={{color: '#10b981'}}>✅</span>
-                    <span className="stat-label">Active Support</span>
-                    <span className="stat-value">{tas.length}</span>
+                <div className={styles.statCard}>
+                    <span className={styles.statIcon}>✅</span>
+                    <span className={styles.statLabel}>Active Support</span>
+                    <span className={styles.statValue}>{tas.length}</span>
                 </div>
-                <div className="stat-card card-pink">
-                    <span className="stat-icon" style={{color: '#ec4899'}}>🛠️</span>
-                    <span className="stat-label">Assigned Labs</span>
-                    <span className="stat-value">{Math.floor(tas.length * 1.5)}</span>
+                <div className={styles.statCard}>
+                    <span className={styles.statIcon}>🛠️</span>
+                    <span className={styles.statLabel}>Assigned Labs</span>
+                    <span className={styles.statValue}>{Math.floor(tas.length * 1.5)}</span>
                 </div>
             </div>
 
-            {error && <div className="error-message">{error}</div>}
+            {error && <div className={styles.errorMessage}>{error}</div>}
 
-            <div className="table-container">
-                <div className="table-header-actions">
-                    <div className="search-input-wrapper">
-                        <span className="search-icon">🔍</span>
+            <div className={styles.tableContainer}>
+                <div className={styles.tableHeaderActions}>
+                    <div className={styles.searchInputWrapper}>
+                        <span className={styles.searchIcon}>🔍</span>
                         <input
                             type="text"
                             placeholder="Search TAs..."
@@ -170,10 +154,10 @@ const TAs = () => {
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <span className="results-count">{filteredTAs.length} of {tas.length} results</span>
+                    <span className={styles.resultsCount}>{filteredTAs.length} of {tas.length} results</span>
                 </div>
 
-                <table className="data-table">
+                <table className={styles.dataTable}>
                     <thead>
                         <tr>
                             <th>TA MEMBER</th>
@@ -188,32 +172,24 @@ const TAs = () => {
                         {filteredTAs.map((ta, index) => {
                             const colors = ['purple', 'blue', 'green', 'orange', 'pink'];
                             const color = colors[index % colors.length];
-                            const initials = ta.name ? ta.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase() : 'TA';
-                            
+                            const initials = ta.name ? ta.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'TA';
+
                             return (
                                 <tr key={ta.ta_id}>
                                     <td>
-                                        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
-                                            <div style={{width: '32px', height: '32px', borderRadius: '50%', background: `var(--card-${color})`, color: `var(--text-${color}-dark, #333)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold'}}>
+                                        <div className={styles.taCell}>
+                                            <div className={styles.avatar} style={{ background: `var(--card-${color})`, color: `var(--text-${color}-dark)` }}>
                                                 {initials}
                                             </div>
                                             <strong>{ta.name}</strong>
                                         </div>
                                     </td>
                                     <td>{ta.roll_number}</td>
-                                    <td><span className={`badge badge-${color}`}>{ta.department_name || 'N/A'}</span></td>
-                                    <td><span style={{color: '#64748b'}}>👨‍🏫 {ta.teacher_name || 'N/A'}</span></td>
-                                    <td><span style={{color: '#64748b'}}>✉️ {ta.email}</span></td>
+                                    <td><span className={styles.badge} style={{ background: `var(--card-${color})`, color: `var(--text-${color}-dark)` }}>{ta.department_name || 'N/A'}</span></td>
+                                    <td><span className={styles.mutedText}>{ta.teacher_name || 'N/A'}</span></td>
+                                    <td><span className={styles.mutedText}>{ta.email}</span></td>
                                     <td>
-                                        <button
-                                            className="btn-icon btn-danger"
-                                            onClick={() => {
-                                                setSelectedTA(ta);
-                                                setShowDeleteModal(true);
-                                            }}
-                                        >
-                                            🗑️
-                                        </button>
+                                        <button onClick={() => { setSelectedTA(ta); setShowDeleteModal(true); }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontWeight: '600' }}>Delete</button>
                                     </td>
                                 </tr>
                             );
@@ -221,23 +197,19 @@ const TAs = () => {
                     </tbody>
                 </table>
                 {filteredTAs.length === 0 && (
-                    <div className="empty-state">No TAs found</div>
+                    <div className={styles.emptyState}>No TAs found</div>
                 )}
             </div>
 
-            {/* Add TA Modal */}
             <ConfirmModal
                 isOpen={showAddModal}
-                onClose={() => {
-                    setShowAddModal(false);
-                    setError('');
-                }}
+                onClose={() => { setShowAddModal(false); setError(''); }}
                 onConfirm={handleAddTA}
                 title="Add Teaching Assistant"
                 message={
-                    <div className="modal-form">
-                        <div className="form-row">
-                            <div className="form-group">
+                    <div className={styles.modalForm}>
+                        <div className={styles.formRow}>
+                            <div className={styles.formGroup}>
                                 <label>Name:</label>
                                 <input
                                     type="text"
@@ -246,7 +218,7 @@ const TAs = () => {
                                     placeholder="Saad"
                                 />
                             </div>
-                            <div className="form-group">
+                            <div className={styles.formGroup}>
                                 <label>Roll Number:</label>
                                 <input
                                     type="text"
@@ -256,8 +228,8 @@ const TAs = () => {
                                 />
                             </div>
                         </div>
-                        <div className="form-row">
-                            <div className="form-group">
+                        <div className={styles.formRow}>
+                            <div className={styles.formGroup}>
                                 <label>Email:</label>
                                 <input
                                     type="email"
@@ -266,7 +238,7 @@ const TAs = () => {
                                     placeholder="l240823@lhr.nu.edu.pk"
                                 />
                             </div>
-                            <div className="form-group">
+                            <div className={styles.formGroup}>
                                 <label>Password:</label>
                                 <input
                                     type="password"
@@ -276,8 +248,8 @@ const TAs = () => {
                                 />
                             </div>
                         </div>
-                        <div className="form-row">
-                            <div className="form-group">
+                        <div className={styles.formRow}>
+                            <div className={styles.formGroup}>
                                 <label>Department:</label>
                                 <select
                                     value={formData.department_id}
@@ -291,7 +263,7 @@ const TAs = () => {
                                     ))}
                                 </select>
                             </div>
-                            <div className="form-group">
+                            <div className={styles.formGroup}>
                                 <label>Supervisor Teacher:</label>
                                 <select
                                     value={formData.teacher_email}
@@ -312,7 +284,6 @@ const TAs = () => {
                 confirmVariant="primary"
             />
 
-            {/* Delete Modal */}
             <ConfirmModal
                 isOpen={showDeleteModal}
                 onClose={() => setShowDeleteModal(false)}

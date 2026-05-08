@@ -1,22 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { login } from '../../services/auth_service';
-import '../../styles/admin.css';
+import styles from './AdminLogin.module.css';
 
-const AdminLogin = ({ onLoginSuccess }) => {
+const AdminLogin = ({ onLoginSuccess, theme, toggleTheme }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [theme, setTheme] = useState('dark'); // Default to Dark as per user preference
-
-    // Toggle Theme Logic
-    useEffect(() => {
-        document.documentElement.setAttribute('data-theme', theme);
-    }, [theme]);
-
-    const toggleTheme = () => {
-        setTheme(theme === 'light' ? 'dark' : 'light');
-    };
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -24,7 +14,9 @@ const AdminLogin = ({ onLoginSuccess }) => {
         setError('');
 
         const result = await login(email, password);
-        if (result.success && result.user.role === 'admin') {
+        if (result.success && result.user?.role?.toLowerCase() === 'admin') {
+            localStorage.setItem('access_token', result.token);
+            localStorage.setItem('user', JSON.stringify(result.user));
             onLoginSuccess(result.user);
         } else if (result.success) {
             setError('Access Denied: Only Admins can access this portal.');
@@ -35,34 +27,23 @@ const AdminLogin = ({ onLoginSuccess }) => {
     };
 
     return (
-        <div className="admin-login-container">
-            <button className="theme-toggle" onClick={toggleTheme}>
+        <div className={styles.container}>
+            <button className={styles.themeToggle} onClick={toggleTheme}>
                 {theme === 'light' ? '🌙' : '☀️'}
             </button>
 
-            <div className="admin-glass-card">
-                <div className="admin-logo" style={{ textAlign: 'center', marginBottom: '24px' }}>
-                    <span style={{
-                        background: 'var(--admin-accent)',
-                        borderRadius: '12px',
-                        width: '44px',
-                        height: '44px',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white',
-                        fontSize: '24px',
-                        boxShadow: '0 0 20px rgba(124, 58, 237, 0.4)'
-                    }}>
+            <div className={styles.glassCard}>
+                <div className={styles.logoWrapper}>
+                    <span className={styles.logo}>
                         🛡️
                     </span>
                 </div>
                 
                 <h2>Admin Portal</h2>
-                <p className="admin-subtitle">Secure access for system administrators</p>
+                <p className={styles.subtitle}>Secure access for system administrators</p>
 
                 <form onSubmit={handleLogin}>
-                    <div className="input-group">
+                    <div className={styles.inputGroup}>
                         <label>ADMIN EMAIL</label>
                         <input
                             type="email"
@@ -73,7 +54,7 @@ const AdminLogin = ({ onLoginSuccess }) => {
                         />
                     </div>
 
-                    <div className="input-group">
+                    <div className={styles.inputGroup}>
                         <label>PASSWORD</label>
                         <input
                             type="password"
@@ -84,14 +65,14 @@ const AdminLogin = ({ onLoginSuccess }) => {
                         />
                     </div>
 
-                    {error && <div className="error-message" style={{ color: '#ef4444', fontSize: '13px', marginBottom: '16px', textAlign: 'center' }}>{error}</div>}
+                    {error && <div className={styles.errorMessage}>{error}</div>}
 
-                    <button type="submit" className="admin-submit-btn" disabled={loading}>
+                    <button type="submit" className={styles.submitBtn} disabled={loading}>
                         {loading ? 'Authenticating...' : 'Sign In to Dashboard →'}
                     </button>
                 </form>
 
-                <div style={{ marginTop: '32px', textAlign: 'center', fontSize: '12px', opacity: 0.6, color: 'var(--admin-text)' }}>
+                <div className={styles.footer}>
                     © 2026 RESORA System · v2.5.0
                 </div>
             </div>
