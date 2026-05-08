@@ -1,13 +1,11 @@
 import axios from 'axios';
 
-// Use port 3000 (your backend), NOT 3001
-const BASE_URL = 'http://localhost:3000';
+// ✅ Use environment variable, fallback to localhost for development
+const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 
 const api = axios.create({
     baseURL: BASE_URL,
-    timeout:300000, // 5 minutes timeout for long-running requests
-    // ✅ DON'T set default Content-Type here
-    // Let each request set its own Content-Type
+    timeout: 300000, // 5 minutes timeout for long-running requests
 });
 
 // Add token to requests
