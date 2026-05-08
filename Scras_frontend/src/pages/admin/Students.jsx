@@ -144,7 +144,7 @@ const Students = () => {
             <div className="stats-grid">
                 <div className="stat-card card-green" style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '24px'}}>
                     <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
-                        <div style={{background: 'white', padding: '8px', borderRadius: '8px', color: '#10b981'}}>🎓</div>
+                        <div style={{background: 'var(--card-bg)', padding: '8px', borderRadius: '8px', color: '#10b981'}}>🎓</div>
                         <div>
                             <div className="stat-value" style={{fontSize: '24px', marginBottom: '0'}}>1</div>
                             <div className="stat-label" style={{margin: '0'}}>1st Year</div>
@@ -153,7 +153,7 @@ const Students = () => {
                 </div>
                 <div className="stat-card card-peach" style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '24px'}}>
                     <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
-                        <div style={{background: 'white', padding: '8px', borderRadius: '8px', color: '#3b82f6'}}>🎓</div>
+                        <div style={{background: 'var(--card-bg)', padding: '8px', borderRadius: '8px', color: '#3b82f6'}}>🎓</div>
                         <div>
                             <div className="stat-value" style={{fontSize: '24px', marginBottom: '0'}}>1</div>
                             <div className="stat-label" style={{margin: '0'}}>2nd Year</div>
@@ -162,7 +162,7 @@ const Students = () => {
                 </div>
                 <div className="stat-card card-orange" style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '24px'}}>
                     <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
-                        <div style={{background: 'white', padding: '8px', borderRadius: '8px', color: '#f59e0b'}}>🎓</div>
+                        <div style={{background: 'var(--card-bg)', padding: '8px', borderRadius: '8px', color: '#f59e0b'}}>🎓</div>
                         <div>
                             <div className="stat-value" style={{fontSize: '24px', marginBottom: '0'}}>2</div>
                             <div className="stat-label" style={{margin: '0'}}>3rd Year</div>
@@ -171,7 +171,7 @@ const Students = () => {
                 </div>
                 <div className="stat-card card-pink" style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '24px'}}>
                     <div style={{display: 'flex', alignItems: 'center', gap: '16px'}}>
-                        <div style={{background: 'white', padding: '8px', borderRadius: '8px', color: '#ec4899'}}>🎓</div>
+                        <div style={{background: 'var(--card-bg)', padding: '8px', borderRadius: '8px', color: '#ec4899'}}>🎓</div>
                         <div>
                             <div className="stat-value" style={{fontSize: '24px', marginBottom: '0'}}>1</div>
                             <div className="stat-label" style={{margin: '0'}}>4th Year</div>

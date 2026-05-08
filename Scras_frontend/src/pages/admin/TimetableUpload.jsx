@@ -89,7 +89,7 @@ const TimetableUpload = () => {
 
             <div 
                 style={{
-                    background: 'white',
+                    background: 'var(--card-bg)',
                     border: `2px dashed ${dragActive ? '#7c3aed' : '#e2e8f0'}`,
                     borderRadius: '24px',
                     padding: '60px 40px',

@@ -26,39 +26,62 @@ import TAMyBookings from './pages/ta/MyBookings';
 
 import api from './services/api_config';
 
+import AdminLogin from './pages/admin/AdminLogin';
+
 const App = () => {
     const [authenticated, setAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
     const [activePage, setActivePage] = useState('departments');
     const [loading, setLoading] = useState(true);
+    
+    // Global Theme State
+    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+    // Detect if this is the Admin Portal (Port 5000)
+    const isAdminPortal = window.location.port === '5000';
+
+    // Apply Theme Globally
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => {
+        setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    };
 
     useEffect(() => {
         if (isAuthenticated()) {
-            setAuthenticated(true);
             const userData = getCurrentUser();
+            const userRole = userData?.role?.toLowerCase();
+
+            // Strict security check: If on Admin Portal, only allow Admins
+            if (isAdminPortal && userRole !== 'admin') {
+                handleLogout(); // Kick out non-admins from port 5000
+                return;
+            }
+
+            setAuthenticated(true);
             setUser(userData);
 
             // Set default landing page based on role
-            const role = userData?.role?.toLowerCase();
-            if (role === 'student') setActivePage('timetable');
-            else if (role === 'teacher' || role === 'ta') setActivePage('my-schedule');
+            if (userRole === 'student') setActivePage('timetable');
+            else if (userRole === 'teacher' || userRole === 'ta') setActivePage('my-schedule');
             else setActivePage('departments');
         }
         setLoading(false);
 
-        // Global page change listener
         const handleExternalPageChange = (e) => {
             if (e.detail) setActivePage(e.detail);
         };
         window.addEventListener('onPageChange', handleExternalPageChange);
         return () => window.removeEventListener('onPageChange', handleExternalPageChange);
-    }, []);
+    }, [isAdminPortal]);
 
     const handleLoginSuccess = (userData) => {
         setAuthenticated(true);
         setUser(userData);
 
-        // Set active page based on role
         const role = userData?.role?.toLowerCase();
         if (role === 'student') setActivePage('timetable');
         else if (role === 'teacher' || role === 'ta') setActivePage('my-schedule');
@@ -85,7 +108,10 @@ const App = () => {
     }
 
     if (!authenticated) {
-        return <Login onLoginSuccess={handleLoginSuccess} />;
+        // Render either Admin Portal or User Portal login
+        return isAdminPortal 
+            ? <AdminLogin onLoginSuccess={handleLoginSuccess} /> 
+            : <Login onLoginSuccess={handleLoginSuccess} />;
     }
 
     const userRole = user?.role?.toLowerCase();
@@ -134,9 +160,22 @@ const App = () => {
 
     return (
         <div className="app">
-            <Sidebar userRole={userRole} activePage={activePage} onPageChange={setActivePage} onLogout={handleLogout} />
+            <Sidebar 
+                userRole={userRole} 
+                activePage={activePage} 
+                onPageChange={setActivePage} 
+                onLogout={handleLogout}
+                theme={theme}
+                toggleTheme={toggleTheme}
+            />
             <div className="main-content">
-                <TopNavbar user={user} onLogout={handleLogout} activePage={activePage} />
+                <TopNavbar 
+                    user={user} 
+                    onLogout={handleLogout} 
+                    activePage={activePage} 
+                    theme={theme}
+                    toggleTheme={toggleTheme}
+                />
                 <div className="page-content">
                     {renderContent()}
                 </div>

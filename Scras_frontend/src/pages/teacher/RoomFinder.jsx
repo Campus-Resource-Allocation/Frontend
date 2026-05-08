@@ -199,7 +199,7 @@ export default function RoomFinder() {
 
             {/* Filter Bar */}
             <div style={{ 
-                background: "white", border: "1px solid #e2e8f0", borderRadius: "20px", 
+                background: "var(--card-bg)", border: "1px solid #e2e8f0", borderRadius: "20px", 
                 padding: "24px", marginBottom: "24px",
                 boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
             }}>
@@ -274,7 +274,7 @@ export default function RoomFinder() {
                         const tc = typeColors[room.room_type] || "#8b5cf6";
                         return (
                             <div key={room.room_id} style={{ 
-                                background: "white", border: `1px solid ${isBooked ? "#dcfce7" : "#eef2f6"}`, 
+                                background: "var(--card-bg)", border: `1px solid ${isBooked ? "#dcfce7" : "var(--border-color)"}`, 
                                 borderRadius: "20px", overflow: "hidden", 
                                 boxShadow: isBooked ? '0 10px 15px -3px rgba(34,197,94,0.05)' : '0 4px 6px -1px rgba(0,0,0,0.02)'
                             }}>

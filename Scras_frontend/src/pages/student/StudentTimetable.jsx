@@ -226,7 +226,7 @@ const StudentTimetable = () => {
 
       {/* Timetable Grid */}
       <div style={{
-        background: '#ffffff',
+        background: 'var(--card-bg)',
         borderRadius: '16px',
         border: '1px solid #e2e8f0',
         overflow: 'hidden',

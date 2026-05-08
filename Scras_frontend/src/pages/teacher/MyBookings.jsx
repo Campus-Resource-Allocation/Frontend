@@ -161,7 +161,7 @@ export default function MyBookings({ onPageChange }) {
                     { label: "Cancelled", value: counts.cancelled, ...statusConfig.Cancelled },
                 ].map((s) => (
                     <div key={s.label} style={{ 
-                        background: "white", 
+                        background: "var(--card-bg)", 
                         border: "1px solid #e2e8f0", 
                         borderRadius: "20px", 
                         padding: "24px", 
@@ -207,7 +207,7 @@ export default function MyBookings({ onPageChange }) {
                 </div>
             ) : (
                 <div style={{ 
-                    background: "white", 
+                    background: "var(--card-bg)", 
                     border: "1px solid #eef2f6", 
                     borderRadius: "24px", 
                     overflow: "hidden", 

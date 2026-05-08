@@ -106,7 +106,7 @@
 /* Role Selector - 2x2 grid */
 .role-selector {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
     margin-bottom: 28px;
 }
@@ -256,11 +256,20 @@
 
 /* ==================== APP VARIABLES & BASE ==================== */
 :root {
+    /* Light Mode (Default) */
+    --bg-page: #f8fafc;
+    --bg-sidebar: #e6e2f1;
+    --bg-sidebar-active: #d5cced;
+    --navbar-bg: #ffffff;
+    --card-bg: #ffffff;
+    --text-primary: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    
     --bg-lavender: #e6e2f1;
     --bg-lavender-dark: #d5cced;
     --text-purple-dark: #1e1b4b;
     --text-purple-muted: #4c1d95;
-    --bg-page: #f8fafc;
     --bg-mint-light: #f0fdf4;
     --bg-mint-dark: #dcfce7;
 
@@ -273,6 +282,32 @@
     --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
+[data-theme='dark'] {
+    /* Dark Mode (Midnight) */
+    --bg-page: #0f172a;
+    --bg-sidebar: #1e293b;
+    --bg-sidebar-active: #334155;
+    --navbar-bg: #1e293b;
+    --card-bg: rgba(30, 41, 59, 0.7); /* Translucent for glass effect */
+    --text-primary: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.1);
+    
+    --bg-lavender: #1e293b;
+    --bg-lavender-dark: #334155;
+    --text-purple-dark: #f8fafc;
+    --text-purple-muted: #a78bfa;
+    --bg-mint-light: #1e293b;
+    --bg-mint-dark: #334155;
+
+    /* Adjust specific card colors for dark mode to be translucent for glass effect */
+    --card-peach: rgba(234, 88, 12, 0.15); /* Orange hint */
+    --card-pink: rgba(219, 39, 119, 0.15); /* Pink hint */
+    --card-green: rgba(22, 163, 74, 0.15); /* Green hint */
+    --card-orange: rgba(217, 119, 6, 0.15); /* Amber/Brown hint */
+    --card-yellow: rgba(202, 138, 4, 0.15); /* Yellow hint */
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -282,7 +317,8 @@
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: var(--bg-page);
-    color: #334155;
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .app {
@@ -293,7 +329,7 @@ body {
 /* ==================== SIDEBAR ==================== */
 .sidebar {
     width: 260px;
-    background: var(--bg-lavender);
+    background: var(--bg-sidebar);
     position: fixed;
     height: 100vh;
     left: 0;
@@ -301,6 +337,8 @@ body {
     display: flex;
     flex-direction: column;
     z-index: 100;
+    border-right: 1px solid var(--border-color);
+    transition: all 0.3s ease;
 }
 
 .sidebar-header {
@@ -360,11 +398,12 @@ body {
 }
 
 .nav-item:hover {
-    background: rgba(255, 255, 255, 0.4);
+    background: var(--border-color);
+    opacity: 0.8;
 }
 
 .nav-item.active {
-    background: var(--bg-lavender-dark);
+    background: var(--bg-sidebar-active);
     font-weight: 600;
 }
 
@@ -436,6 +475,7 @@ body {
     display: flex;
     flex-direction: column;
     background: var(--bg-page);
+    transition: background-color 0.3s ease;
 }
 
 /* ==================== TOP NAVBAR ==================== */
@@ -538,13 +578,13 @@ body {
 .page-title h1 {
     font-size: 24px;
     font-weight: 800;
-    color: #1e293b;
+    color: var(--text-primary);
     margin-bottom: 4px;
 }
 
 .page-title p {
     font-size: 13px;
-    color: #64748b;
+    color: var(--text-muted);
 }
 
 .btn-primary {
@@ -576,6 +616,9 @@ body {
     border-radius: 16px;
     display: flex;
     flex-direction: column;
+    background: var(--card-bg);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-color);
     box-shadow: var(--shadow-soft);
     position: relative;
     overflow: hidden;
@@ -605,7 +648,7 @@ body {
 .stat-value {
     font-size: 32px;
     font-weight: 800;
-    color: #0f172a;
+    color: var(--text-primary);
     margin-bottom: 8px;
 }
 
@@ -637,9 +680,10 @@ body {
 
 /* ==================== TABLE ==================== */
 .table-container {
-    background: white;
+    background: var(--card-bg);
+    backdrop-filter: blur(8px);
     border-radius: 16px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     overflow: hidden;
 }
 
@@ -659,10 +703,17 @@ body {
 .search-input-wrapper input {
     width: 100%;
     padding: 10px 16px 10px 40px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     font-size: 13px;
-    background: #f8fafc;
+    background: var(--admin-input-bg, rgba(255,255,255,0.05));
+    color: var(--text-primary);
+    transition: all 0.3s;
+}
+
+.search-input-wrapper input:focus {
+    outline: none;
+    border-color: #a78bfa;
 }
 
 .search-input-wrapper .search-icon {
@@ -689,20 +740,21 @@ body {
     text-align: left;
     font-size: 11px;
     font-weight: 700;
-    color: #065f46;
+    color: var(--text-primary);
     text-transform: uppercase;
     letter-spacing: 1px;
+    opacity: 0.8;
 }
 
 .data-table td {
     padding: 16px;
     font-size: 13px;
-    color: #334155;
-    border-bottom: 1px solid #f1f5f9;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .data-table tbody tr:hover {
-    background: #f8fafc;
+    background: var(--border-color);
 }
 
 /* Badges */

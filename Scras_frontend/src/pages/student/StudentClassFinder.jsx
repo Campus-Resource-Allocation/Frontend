@@ -138,7 +138,7 @@ const StudentClassFinder = () => {
             {/* Course Cards Grid */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 {filtered.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '64px', color: '#94a3b8', background: 'white', borderRadius: '20px', border: '1px dashed #e2e8f0' }}>
+                    <div style={{ textAlign: 'center', padding: '64px', color: '#94a3b8', background: 'var(--card-bg)', borderRadius: '20px', border: '1px dashed #e2e8f0' }}>
                         No enrolled courses found in database.
                     </div>
                 ) : (
@@ -148,7 +148,7 @@ const StudentClassFinder = () => {
 
                         return (
                             <div key={idx} style={{
-                                background: 'white',
+                                background: 'var(--card-bg)',
                                 borderRadius: '20px',
                                 border: '1px solid #eef2f6',
                                 overflow: 'hidden',
