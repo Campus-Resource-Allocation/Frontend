@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './TopNavbar.module.css';
 
-const TopNavbar = ({ user, onLogout, activePage = 'departments', theme, toggleTheme }) => {
+const TopNavbar = ({ user, onLogout, activePage = 'departments', theme, toggleTheme, onToggleSidebar }) => {
     const capitalize = (str) => {
         if (!str) return '';
         return str.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');

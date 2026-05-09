@@ -6,7 +6,7 @@
 import React from 'react';
 import styles from './Sidebar.module.css';
 
-const Sidebar = ({ userRole, activePage, onPageChange, onLogout }) => {
+const Sidebar = ({ userRole, activePage, onPageChange, onLogout, isOpen, onToggle }) => {
     const adminNavItems = [
         {
             id: 'departments', label: 'Departments',
