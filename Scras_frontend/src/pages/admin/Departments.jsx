@@ -198,7 +198,7 @@ const Departments = () => {
                                 <tr key={dept.department_id}>
                                     <td><span className={styles.badge} style={{ background: `var(--card-${color})`, color: `var(--text-${color}-dark)` }}>{code || 'DPT'}</span></td>
                                     <td><span className={styles.deptIcon}>🏛️</span> <strong>{dept.name}</strong></td>
-                                    <td>Dr. Sample Name</td>
+                                    <td>{deptHeads[index % deptHeads.length]}</td>
                                     <td>
                                         <div className={styles.progressContainer}>
                                             <div className={styles.progressLine} style={{ color: `var(--text-${color}-dark)` }}></div>
