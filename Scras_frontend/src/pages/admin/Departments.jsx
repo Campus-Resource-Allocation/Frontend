@@ -4,9 +4,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { getDepartments, createDepartment, deleteDepartment, getDashboardStats } from '../../services/admin_service';
+import { getDepartments, getDashboardStats } from '../../services/admin_service';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import ConfirmModal from '../../components/common/ConfirmModal';
 import styles from './Departments.module.css';
 
 const Departments = () => {
@@ -14,10 +13,6 @@ const Departments = () => {
     const [filteredDepts, setFilteredDepts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [selectedDept, setSelectedDept] = useState(null);
-    const [newDeptName, setNewDeptName] = useState('');
     const [error, setError] = useState('');
     const [stats, setStats] = useState({
         total_depts: 0,
@@ -67,34 +62,7 @@ const Departments = () => {
         }
     };
 
-    const handleAddDepartment = async () => {
-        if (!newDeptName.trim()) {
-            setError('Department name is required');
-            return;
-        }
 
-        const result = await createDepartment({ name: newDeptName });
-        if (result.success) {
-            setShowAddModal(false);
-            setNewDeptName('');
-            fetchDepartments();
-        } else {
-            setError(result.message);
-        }
-    };
-
-    const handleDeleteDepartment = async () => {
-        if (!selectedDept) return;
-
-        const result = await deleteDepartment(selectedDept.department_id);
-        if (result.success) {
-            setShowDeleteModal(false);
-            setSelectedDept(null);
-            fetchDepartments();
-        } else {
-            setError(result.message);
-        }
-    };
 
     const deptHeads = [
         "Dr. Zareen Alamgir",
@@ -216,38 +184,6 @@ const Departments = () => {
                 )}
             </div>
 
-            <ConfirmModal
-                isOpen={showAddModal}
-                onClose={() => setShowAddModal(false)}
-                onConfirm={handleAddDepartment}
-                title="Add Department"
-                message={
-                    <div className={styles.modalForm}>
-                        <div className={styles.formGroup}>
-                            <label>Department Name:</label>
-                            <input
-                                type="text"
-                                value={newDeptName}
-                                onChange={(e) => setNewDeptName(e.target.value)}
-                                placeholder="e.g., Computer Science"
-                                style={{ padding: '12px', borderRadius: '10px', border: '1.5px solid var(--border-color)', background: 'var(--bg-page)', color: 'var(--text-primary)', width: '100%', marginTop: '8px' }}
-                            />
-                        </div>
-                    </div>
-                }
-                confirmText="Add"
-                confirmVariant="primary"
-            />
-
-            <ConfirmModal
-                isOpen={showDeleteModal}
-                onClose={() => setShowDeleteModal(false)}
-                onConfirm={handleDeleteDepartment}
-                title="Delete Department"
-                message={`Are you sure you want to delete "${selectedDept?.name}"? This will also delete all associated courses and schedules.`}
-                confirmText="Delete"
-                confirmVariant="danger"
-            />
         </div>
     );
 };
