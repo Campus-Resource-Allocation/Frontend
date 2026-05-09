@@ -96,6 +96,27 @@ const Departments = () => {
         }
     };
 
+    const deptHeads = [
+        "Dr. Zareen Alamgir",
+        "Dr. Faiza Awan",
+        "Dr. Amir Wali",
+        "Prof. Hira Zafar",
+        "Dr. Amara Okoro",
+        "Prof. David Miller",
+        "Dr. Sophia Lee",
+        "Prof. Robert Taylor",
+        "Dr. Maria Garcia"
+    ];
+
+    const [headIndex, setHeadIndex] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setHeadIndex((prev) => (prev + 1) % deptHeads.length);
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
+
     if (loading) return <LoadingSpinner />;
 
     return (
@@ -129,8 +150,12 @@ const Departments = () => {
                 <div className={styles.statCard}>
                     <span className={styles.statIcon}>👨‍🏫</span>
                     <span className={styles.statLabel}>Dept Heads</span>
-                    <span className={styles.statValue}>{stats.total_teachers}</span>
-                    <span className={styles.statSubtext}>Faculty leads</span>
+                    <div className={styles.tickerContainer}>
+                        <span key={headIndex} className={styles.statValueTicker}>
+                            {deptHeads[headIndex]}
+                        </span>
+                    </div>
+                    <span className={styles.statSubtext}>Faculty leads ({deptHeads.length})</span>
                 </div>
             </div>
 
@@ -168,7 +193,7 @@ const Departments = () => {
                             const color = colors[index % colors.length];
                             const students = Math.floor(Math.random() * 300) + 200;
                             const courses = Math.floor(Math.random() * 20) + 10;
-                            const code = dept.name.split(' ').map(w => w[0]).join('').substring(0,4).toUpperCase();
+                            const code = dept.name.split(' ').map(w => w[0]).join('').substring(0, 4).toUpperCase();
                             return (
                                 <tr key={dept.department_id}>
                                     <td><span className={styles.badge} style={{ background: `var(--card-${color})`, color: `var(--text-${color}-dark)` }}>{code || 'DPT'}</span></td>
