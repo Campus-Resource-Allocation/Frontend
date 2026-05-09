@@ -6,7 +6,7 @@ import styles from './Login.module.css';
 const Login = ({ theme, toggleTheme }) => {
     const navigate = useNavigate();
     const [selectedRole, setSelectedRole] = useState('teacher');
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState(''); // Changed from username
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -57,15 +57,15 @@ const Login = ({ theme, toggleTheme }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        if (!username || !password) {
-            setError('Please enter both username and password');
+        if (!email || !password) {
+            setError('Please enter both email and password');
             return;
         }
         
         setLoading(true);
         setError('');
         
-        const result = await login(username, password);
+        const result = await login(email, password); // Changed to email
         
         if (result.success) {
             const userRole = result.user.role.toLowerCase();
@@ -173,12 +173,12 @@ const Login = ({ theme, toggleTheme }) => {
 
                             <form onSubmit={handleSubmit}>
                                 <div className={styles.inputGroup}>
-                                    <label>USERNAME</label>
+                                    <label>EMAIL</label>
                                     <input
-                                        type="text"
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}
-                                        placeholder="Enter your username"
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="Enter your email"
                                         disabled={loading}
                                     />
                                 </div>
