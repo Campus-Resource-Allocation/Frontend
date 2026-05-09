@@ -29,10 +29,6 @@ import TAMyBookings from './pages/ta/MyBookings';
 import api from './services/api_config';
 
 const App = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    
-    // Helper to get/set cookies for theme
     const getCookie = (name) => {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
@@ -46,7 +42,6 @@ const App = () => {
 
     const [theme, setTheme] = useState(getCookie('theme') || localStorage.getItem('theme') || 'light');
 
-    // Apply Theme
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
@@ -67,24 +62,20 @@ const App = () => {
 
     return (
         <Routes>
-            {/* Public Routes */}
             <Route path="/login" element={<Login theme={theme} toggleTheme={toggleTheme} />} />
             <Route path="/admin/login" element={<AdminLogin theme={theme} toggleTheme={toggleTheme} />} />
             
-            {/* Protected Routes */}
             <Route path="/admin/*" element={<ProtectedRoute allowedRole="admin" theme={theme} toggleTheme={toggleTheme} />} />
             <Route path="/student/*" element={<ProtectedRoute allowedRole="student" theme={theme} toggleTheme={toggleTheme} />} />
             <Route path="/teacher/*" element={<ProtectedRoute allowedRole="teacher" theme={theme} toggleTheme={toggleTheme} />} />
             <Route path="/ta/*" element={<ProtectedRoute allowedRole="ta" theme={theme} toggleTheme={toggleTheme} />} />
             
-            {/* Default Redirect */}
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
     );
 };
 
-// Protected Route Component
 const ProtectedRoute = ({ allowedRole, theme, toggleTheme }) => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -92,7 +83,6 @@ const ProtectedRoute = ({ allowedRole, theme, toggleTheme }) => {
 
     useEffect(() => {
         if (!isAuthenticated()) {
-            // Redirect to appropriate login page
             if (allowedRole === 'admin') {
                 navigate('/admin/login', { replace: true });
             } else {
@@ -104,14 +94,11 @@ const ProtectedRoute = ({ allowedRole, theme, toggleTheme }) => {
         const user = getCurrentUser();
         const userRole = user?.role?.toLowerCase();
 
-        // Check if user has permission for this route
         if (userRole !== allowedRole) {
-            // Redirect to their correct dashboard
             navigate(`/${userRole}/dashboard`, { replace: true });
             return;
         }
 
-        // Set default page based on route
         const path = location.pathname.split('/')[2] || 'dashboard';
         setActivePage(path);
     }, [allowedRole, navigate, location]);
@@ -125,7 +112,6 @@ const ProtectedRoute = ({ allowedRole, theme, toggleTheme }) => {
             localStorage.removeItem('access_token');
             localStorage.removeItem('user');
             
-            // Redirect to appropriate login
             if (allowedRole === 'admin') {
                 navigate('/admin/login', { replace: true });
             } else {
