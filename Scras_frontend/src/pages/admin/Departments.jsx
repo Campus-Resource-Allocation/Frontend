@@ -149,9 +149,6 @@ const Departments = () => {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                         <span className={styles.resultsCount}>{filteredDepts.length} of {departments.length} results</span>
-                        <button onClick={() => setShowAddModal(true)} style={{
-                            padding: '10px 20px', borderRadius: '12px', background: 'var(--admin-accent)', color: 'white', border: 'none', fontWeight: '700', cursor: 'pointer'
-                        }}>+ Add Department</button>
                     </div>
                 </div>
 
@@ -163,7 +160,6 @@ const Departments = () => {
                             <th>HEAD</th>
                             <th>STUDENTS</th>
                             <th>COURSES</th>
-                            <th>ACTIONS</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -185,9 +181,6 @@ const Departments = () => {
                                         </div>
                                     </td>
                                     <td>{courses}</td>
-                                    <td>
-                                        <button onClick={() => { setSelectedDept(dept); setShowDeleteModal(true); }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontWeight: '600' }}>Delete</button>
-                                    </td>
                                 </tr>
                             );
                         })}

@@ -95,9 +95,6 @@ const Teachers = () => {
                     <h1>Teachers</h1>
                     <p>{teachers.length} faculty members · {teachers.length - 1 || 1} active</p>
                 </div>
-                <button onClick={() => setShowAddModal(true)} style={{
-                    padding: '10px 20px', borderRadius: '12px', background: 'var(--admin-accent)', color: 'white', border: 'none', fontWeight: '700', cursor: 'pointer'
-                }}>+ Add Teacher</button>
             </div>
 
             <div className={styles.statsGrid}>

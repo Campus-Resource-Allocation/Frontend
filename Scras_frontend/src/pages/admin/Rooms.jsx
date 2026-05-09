@@ -148,9 +148,6 @@ const Rooms = () => {
                         />
                     </div>
                     <span className={styles.resultsCount}>{filteredRooms.length} of {rooms.length} results</span>
-                    <button className={styles.addBtn} onClick={() => setShowAddModal(true)} style={{
-                        padding: '10px 20px', borderRadius: '12px', background: 'var(--admin-accent)', color: 'white', border: 'none', fontWeight: '700', cursor: 'pointer'
-                    }}>+ Add Room</button>
                 </div>
 
                 <table className={styles.dataTable}>
@@ -162,7 +159,6 @@ const Rooms = () => {
                             <th>CAPACITY</th>
                             <th>TYPE</th>
                             <th>STATUS</th>
-                            <th>ACTIONS</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -190,9 +186,6 @@ const Rooms = () => {
                                         <span className={styles.badge} style={{ background: `var(--card-${statusColor})`, color: `var(--text-${statusColor}-dark)` }}>
                                             <span className={styles.statusDot}></span> {status}
                                         </span>
-                                    </td>
-                                    <td>
-                                        <button onClick={() => { setSelectedRoom(room); setShowDeleteModal(true); }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontWeight: '600' }}>Delete</button>
                                     </td>
                                 </tr>
                             );

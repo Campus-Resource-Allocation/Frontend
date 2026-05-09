@@ -158,9 +158,6 @@ const Courses = () => {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                         <span className={styles.resultsCount}>{filteredCourses.length} of {courses.length} results</span>
-                        <button onClick={() => setShowAddModal(true)} style={{
-                            padding: '10px 20px', borderRadius: '12px', background: 'var(--admin-accent)', color: 'white', border: 'none', fontWeight: '700', cursor: 'pointer'
-                        }}>+ Add Course</button>
                     </div>
                 </div>
 
@@ -172,7 +169,6 @@ const Courses = () => {
                             <th>CREDITS</th>
                             <th>TYPE</th>
                             <th>SEMESTER</th>
-                            <th>ACTIONS</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -195,9 +191,6 @@ const Courses = () => {
                                     <td>{course.credit_hours} cr</td>
                                     <td><span className={styles.badge} style={{ background: `var(--card-${typeColor})`, color: `var(--text-${typeColor}-dark)` }}>{course.course_type || 'Theory'}</span></td>
                                     <td>Sem {course.semester}</td>
-                                    <td>
-                                        <button onClick={() => { setSelectedCourse(course); setShowDeleteModal(true); }} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontWeight: '600' }}>Delete</button>
-                                    </td>
                                 </tr>
                             );
                         })}
