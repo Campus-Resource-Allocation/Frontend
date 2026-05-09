@@ -100,7 +100,7 @@ const Sidebar = ({ userRole, activePage, onPageChange, onLogout, isOpen, onToggl
 
     const getUserEmail = () => {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
-        return user.email || 'user@scras.edu';
+        return user.email || 'user@resora.edu';
     };
 
     const navItems = getNavItems();
@@ -109,8 +109,8 @@ const Sidebar = ({ userRole, activePage, onPageChange, onLogout, isOpen, onToggl
         <div className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`}>
             <div className={styles.header}>
                 <div className={styles.logoWrapper}>
-                    <div className={styles.logoBox}>S</div>
-                    <h2 className={styles.logoText}>SCRAS</h2>
+                    <div className={styles.logoBox}>R</div>
+                    <h2 className={styles.logoText}>RESORA</h2>
                 </div>
                 <button className={styles.closeBtn} onClick={onToggle} aria-label="Close Menu">
                     <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">

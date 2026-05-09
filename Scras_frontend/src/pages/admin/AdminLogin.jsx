@@ -56,6 +56,7 @@ const AdminLogin = ({ theme, toggleTheme }) => {  // ✅ REMOVE onLoginSuccess
                         <label>ADMIN EMAIL</label>
                         <input
                             type="email"
+                            placeholder="[EMAIL_ADDRESS]"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
@@ -68,6 +69,7 @@ const AdminLogin = ({ theme, toggleTheme }) => {  // ✅ REMOVE onLoginSuccess
                         <div style={{ position: 'relative' }}>
                             <input
                                 type={showPassword ? 'text' : 'password'}
+                                placeholder="Enter your password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
