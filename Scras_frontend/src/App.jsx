@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import Login from './pages/Login';
+import AdminLogin from './pages/admin/AdminLogin';
 import Sidebar from './components/Sidebar';
 import TopNavbar from './components/TopNavbar';
-import { isAuthenticated, getCurrentUser, getUserRole } from './services/auth_service';
+import { isAuthenticated, getCurrentUser } from './services/auth_service';
 
 // Admin Pages
 import Departments from './pages/admin/Departments';
@@ -26,15 +28,11 @@ import TAMyBookings from './pages/ta/MyBookings';
 
 import api from './services/api_config';
 
-import AdminLogin from './pages/admin/AdminLogin';
-
 const App = () => {
-    const [authenticated, setAuthenticated] = useState(false);
-    const [user, setUser] = useState(null);
-    const [activePage, setActivePage] = useState('departments');
-    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+    const location = useLocation();
     
-    // Helper to get/set cookies for cross-port (localhost) theme sharing
+    // Helper to get/set cookies for theme
     const getCookie = (name) => {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
@@ -43,22 +41,17 @@ const App = () => {
     };
 
     const setCookie = (name, value) => {
-        document.cookie = `${name}=${value}; path=/; domain=localhost; max-age=31536000`; // 1 year
+        document.cookie = `${name}=${value}; path=/; max-age=31536000`;
     };
 
-    // Global Theme State: Check cookie first, then localStorage, default to light
     const [theme, setTheme] = useState(getCookie('theme') || localStorage.getItem('theme') || 'light');
 
-    // Detect if this is the Admin Portal (Port 5000)
-    const isAdminPortal = window.location.port === '5000';
-
-    // Apply Theme Globally and Listen for Cross-Tab Changes
+    // Apply Theme
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme); // Triggers 'storage' event for other tabs
+        localStorage.setItem('theme', theme);
         setCookie('theme', theme);
 
-        // Listen for changes from other tabs (Real-time sync)
         const handleStorageChange = (e) => {
             if (e.key === 'theme' && e.newValue) {
                 setTheme(e.newValue);
@@ -72,134 +65,151 @@ const App = () => {
         setTheme(prev => prev === 'light' ? 'dark' : 'light');
     };
 
+    return (
+        <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={<Login theme={theme} toggleTheme={toggleTheme} />} />
+            <Route path="/admin/login" element={<AdminLogin theme={theme} toggleTheme={toggleTheme} />} />
+            
+            {/* Protected Routes */}
+            <Route path="/admin/*" element={<ProtectedRoute allowedRole="admin" theme={theme} toggleTheme={toggleTheme} />} />
+            <Route path="/student/*" element={<ProtectedRoute allowedRole="student" theme={theme} toggleTheme={toggleTheme} />} />
+            <Route path="/teacher/*" element={<ProtectedRoute allowedRole="teacher" theme={theme} toggleTheme={toggleTheme} />} />
+            <Route path="/ta/*" element={<ProtectedRoute allowedRole="ta" theme={theme} toggleTheme={toggleTheme} />} />
+            
+            {/* Default Redirect */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+    );
+};
+
+// Protected Route Component
+const ProtectedRoute = ({ allowedRole, theme, toggleTheme }) => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [activePage, setActivePage] = useState('');
+
     useEffect(() => {
-        if (isAuthenticated()) {
-            const userData = getCurrentUser();
-            const userRole = userData?.role?.toLowerCase();
-
-            // Strict security check: If on Admin Portal, only allow Admins
-            if (isAdminPortal && userRole !== 'admin') {
-                handleLogout(); // Kick out non-admins from port 5000
-                return;
+        if (!isAuthenticated()) {
+            // Redirect to appropriate login page
+            if (allowedRole === 'admin') {
+                navigate('/admin/login', { replace: true });
+            } else {
+                navigate('/login', { replace: true });
             }
-
-            setAuthenticated(true);
-            setUser(userData);
-
-            // Set default landing page based on role
-            if (userRole === 'student') setActivePage('timetable');
-            else if (userRole === 'teacher' || userRole === 'ta') setActivePage('my-schedule');
-            else setActivePage('departments');
+            return;
         }
-        setLoading(false);
 
-        const handleExternalPageChange = (e) => {
-            if (e.detail) setActivePage(e.detail);
-        };
-        window.addEventListener('onPageChange', handleExternalPageChange);
-        return () => window.removeEventListener('onPageChange', handleExternalPageChange);
-    }, [isAdminPortal]);
+        const user = getCurrentUser();
+        const userRole = user?.role?.toLowerCase();
 
-    const handleLoginSuccess = (userData) => {
-        setAuthenticated(true);
-        setUser(userData);
+        // Check if user has permission for this route
+        if (userRole !== allowedRole) {
+            // Redirect to their correct dashboard
+            navigate(`/${userRole}/dashboard`, { replace: true });
+            return;
+        }
 
-        const role = userData?.role?.toLowerCase();
-        if (role === 'student') setActivePage('timetable');
-        else if (role === 'teacher' || role === 'ta') setActivePage('my-schedule');
-        else setActivePage('departments');
-        
-        setLoading(false);
-    };
+        // Set default page based on route
+        const path = location.pathname.split('/')[2] || 'dashboard';
+        setActivePage(path);
+    }, [allowedRole, navigate, location]);
 
     const handleLogout = async () => {
         try {
             await api.post('/auth/logout');
         } catch (err) {
-            console.error('Logout API failed:', err);
+            console.error('Logout failed:', err);
         } finally {
             localStorage.removeItem('access_token');
             localStorage.removeItem('user');
-            setAuthenticated(false);
-            setUser(null);
+            
+            // Redirect to appropriate login
+            if (allowedRole === 'admin') {
+                navigate('/admin/login', { replace: true });
+            } else {
+                navigate('/login', { replace: true });
+            }
         }
     };
 
-    if (loading) {
-        return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
+    if (!isAuthenticated()) {
+        return null;
     }
 
-    if (!authenticated) {
-        // Render either Admin Portal or User Portal login
-        return isAdminPortal 
-            ? <AdminLogin onLoginSuccess={handleLoginSuccess} theme={theme} toggleTheme={toggleTheme} /> 
-            : <Login onLoginSuccess={handleLoginSuccess} theme={theme} toggleTheme={toggleTheme} />;
-    }
-
+    const user = getCurrentUser();
     const userRole = user?.role?.toLowerCase();
 
-    const renderContent = () => {
-        if (userRole === 'admin') {
-            switch (activePage) {
-                case 'departments': return <Departments />;
-                case 'teachers': return <Teachers />;
-                case 'students': return <Students />;
-                case 'rooms': return <Rooms />;
-                case 'courses': return <Courses />;
-                case 'approvals': return <ApprovalQueue />;
-                case 'upload-timetable': return <TimetableUpload />;
-                case 'tas': return <TAs />;
-                default: return <Departments />;
-            }
-        }
-
-        if (userRole === 'student') {
-            switch (activePage) {
-                case 'timetable': return <StudentTimetable />;
-                case 'find-class': return <StudentClassFinder />;
-                default: return <StudentTimetable />;
-            }
-        }
-
-        if (userRole === 'teacher') {
-            switch (activePage) {
-                case 'my-schedule': return <MyBookings onPageChange={setActivePage} />;
-                case 'room-finder': return <RoomFinder />;
-                default: return <MyBookings onPageChange={setActivePage} />;
-            }
-        }
-
-        if (userRole === 'ta') {
-            switch (activePage) {
-                case 'my-schedule': return <TAMyBookings onPageChange={setActivePage} />;
-                case 'room-finder': return <TARoomFinder />;
-                default: return <TAMyBookings onPageChange={setActivePage} />;
-            }
-        }
-
-        return <div>Welcome {user?.role}</div>;
-    };
+    if (userRole !== allowedRole) {
+        return null;
+    }
 
     return (
         <div className="app">
             <Sidebar 
-                userRole={userRole} 
-                activePage={activePage} 
-                onPageChange={setActivePage} 
+                userRole={userRole}
+                activePage={activePage}
+                onPageChange={(page) => {
+                    setActivePage(page);
+                    navigate(`/${userRole}/${page}`);
+                }}
                 onLogout={handleLogout}
                 theme={theme}
                 toggleTheme={toggleTheme}
             />
             <div className="main-content">
                 <TopNavbar 
-                    user={user} 
-                    onLogout={handleLogout} 
-                    activePage={activePage} 
+                    user={user}
+                    onLogout={handleLogout}
+                    activePage={activePage}
                     theme={theme}
                     toggleTheme={toggleTheme}
                 />
                 <div className="page-content">
-                    {renderContent()}
+                    <Routes>
+                        {userRole === 'admin' && (
+                            <>
+                                <Route path="dashboard" element={<Departments />} />
+                                <Route path="departments" element={<Departments />} />
+                                <Route path="teachers" element={<Teachers />} />
+                                <Route path="students" element={<Students />} />
+                                <Route path="rooms" element={<Rooms />} />
+                                <Route path="courses" element={<Courses />} />
+                                <Route path="approvals" element={<ApprovalQueue />} />
+                                <Route path="upload-timetable" element={<TimetableUpload />} />
+                                <Route path="tas" element={<TAs />} />
+                                <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+                            </>
+                        )}
+                        
+                        {userRole === 'student' && (
+                            <>
+                                <Route path="dashboard" element={<StudentTimetable />} />
+                                <Route path="timetable" element={<StudentTimetable />} />
+                                <Route path="find-class" element={<StudentClassFinder />} />
+                                <Route path="*" element={<Navigate to="/student/dashboard" replace />} />
+                            </>
+                        )}
+                        
+                        {userRole === 'teacher' && (
+                            <>
+                                <Route path="dashboard" element={<MyBookings onPageChange={setActivePage} />} />
+                                <Route path="my-schedule" element={<MyBookings onPageChange={setActivePage} />} />
+                                <Route path="room-finder" element={<RoomFinder />} />
+                                <Route path="*" element={<Navigate to="/teacher/dashboard" replace />} />
+                            </>
+                        )}
+                        
+                        {userRole === 'ta' && (
+                            <>
+                                <Route path="dashboard" element={<TAMyBookings onPageChange={setActivePage} />} />
+                                <Route path="my-schedule" element={<TAMyBookings onPageChange={setActivePage} />} />
+                                <Route path="room-finder" element={<TARoomFinder />} />
+                                <Route path="*" element={<Navigate to="/ta/dashboard" replace />} />
+                            </>
+                        )}
+                    </Routes>
                 </div>
             </div>
         </div>

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { login } from '../services/auth_service';
 import styles from './Login.module.css';
 
-const Login = ({ onLoginSuccess, theme, toggleTheme }) => {
+const Login = ({ theme, toggleTheme }) => {
+    const navigate = useNavigate();
     const [selectedRole, setSelectedRole] = useState('teacher');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -54,27 +56,37 @@ const Login = ({ onLoginSuccess, theme, toggleTheme }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
         if (!username || !password) {
             setError('Please enter both username and password');
             return;
         }
+        
         setLoading(true);
         setError('');
+        
         const result = await login(username, password);
+        
         if (result.success) {
             const userRole = result.user.role.toLowerCase();
             const uiRole = selectedRole.toLowerCase();
             
             if (userRole !== uiRole) {
                 setError(`Access Denied: This account belongs to a ${result.user.role}, but you selected ${selectedRole.toUpperCase()}.`);
-            } else {
-                localStorage.setItem('access_token', result.token);
-                localStorage.setItem('user', JSON.stringify(result.user));
-                onLoginSuccess(result.user);
+                setLoading(false);
+                return;
             }
+            
+            // Store token and user data
+            localStorage.setItem('access_token', result.token);
+            localStorage.setItem('user', JSON.stringify(result.user));
+            
+            // Navigate to appropriate dashboard
+            navigate(`/${userRole}/dashboard`, { replace: true });
         } else {
             setError(result.message);
         }
+        
         setLoading(false);
     };
 
