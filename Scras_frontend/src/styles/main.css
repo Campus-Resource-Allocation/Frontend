@@ -307,6 +307,10 @@
     --theme-login-bg: #f0fdf4;
     --theme-login-form-bg: #f0fdf4;
     --theme-login-sidebar-bg: #e6e2f1; /* Lightish Purple/Lavender */
+
+    /* Admin Accent Variables */
+    --admin-accent: #7c3aed;
+    --admin-accent-glow: rgba(124, 58, 237, 0.3);
 }
 
 [data-theme='dark'] {
@@ -360,6 +364,10 @@
     --theme-login-bg: #0f172a; /* Deep Navy */
     --theme-login-form-bg: #0f172a;
     --theme-login-sidebar-bg: #1e293b; /* Deep Slate */
+
+    /* Admin Accent Variables */
+    --admin-accent: #a78bfa;
+    --admin-accent-glow: rgba(167, 139, 250, 0.4);
 }
 
 * {

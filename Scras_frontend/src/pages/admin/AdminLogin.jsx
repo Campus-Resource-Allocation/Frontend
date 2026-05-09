@@ -17,12 +17,12 @@ const AdminLogin = ({ theme, toggleTheme }) => {  // ✅ REMOVE onLoginSuccess
         setError('');
 
         const result = await login(email, password);
-        
+
         if (result.success && result.user?.role?.toLowerCase() === 'admin') {
             // ✅ Store credentials
             localStorage.setItem('access_token', result.token);
             localStorage.setItem('user', JSON.stringify(result.user));
-            
+
             // ✅ Navigate to admin dashboard
             navigate('/admin/dashboard', { replace: true });
         } else if (result.success) {
@@ -42,10 +42,12 @@ const AdminLogin = ({ theme, toggleTheme }) => {  // ✅ REMOVE onLoginSuccess
             <div className={styles.glassCard}>
                 <div className={styles.logoWrapper}>
                     <span className={styles.logo}>
-                        🛡️
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
                     </span>
                 </div>
-                
+
                 <h2>Admin Portal</h2>
                 <p className={styles.subtitle}>Secure access for system administrators</p>
 
@@ -54,7 +56,6 @@ const AdminLogin = ({ theme, toggleTheme }) => {  // ✅ REMOVE onLoginSuccess
                         <label>ADMIN EMAIL</label>
                         <input
                             type="email"
-                            placeholder="admin@resora.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
@@ -67,7 +68,6 @@ const AdminLogin = ({ theme, toggleTheme }) => {  // ✅ REMOVE onLoginSuccess
                         <div style={{ position: 'relative' }}>
                             <input
                                 type={showPassword ? 'text' : 'password'}
-                                placeholder="••••••••"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required

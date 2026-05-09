@@ -57,7 +57,7 @@
     justify-content: center;
     color: white;
     font-size: 24px;
-    box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
+    box-shadow: 0 0 20px var(--admin-accent-glow);
 }
 
 .glassCard h2 {
@@ -125,12 +125,12 @@
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
-    box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3);
+    box-shadow: 0 10px 15px -3px var(--admin-accent-glow);
 }
 
 .submitBtn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 15px 25px -5px rgba(124, 58, 237, 0.4);
+    box-shadow: 0 15px 25px -5px var(--admin-accent-glow);
 }
 
 .submitBtn:disabled {
