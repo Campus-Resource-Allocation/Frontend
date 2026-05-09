@@ -106,12 +106,17 @@ const Sidebar = ({ userRole, activePage, onPageChange, onLogout }) => {
     const navItems = getNavItems();
 
     return (
-        <div className={styles.sidebar}>
+        <div className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`}>
             <div className={styles.header}>
                 <div className={styles.logoWrapper}>
                     <div className={styles.logoBox}>S</div>
                     <h2 className={styles.logoText}>SCRAS</h2>
                 </div>
+                <button className={styles.closeBtn} onClick={onToggle} aria-label="Close Menu">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
                 <span className={styles.roleBadge}>{getRoleBadge()}</span>
             </div>
 

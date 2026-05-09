@@ -1062,17 +1062,152 @@ body {
 }
 
 /* Responsive */
-@media (max-width: 900px) {
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Menu Toggle Button (Hidden by default on desktop) */
+.menuToggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 12px;
+    border-radius: 8px;
+    color: #10b981;
+}
+
+.closeBtn {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 280px;
+    }
+
+    .app.sidebar-open .sidebar {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+    }
+
+    .menuToggle {
+        display: block;
+    }
+
+    .closeBtn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.05);
+        border: none;
+        padding: 6px;
+        border-radius: 8px;
+        cursor: pointer;
+        color: var(--text-purple-dark);
+        margin-left: auto;
+    }
+
+    .top-navbar {
+        padding: 12px 20px;
+    }
+
+    .page-content {
+        padding: 20px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 768px) {
     .login-card {
         flex-direction: column;
-        margin: 20px;
     }
 
     .login-brand {
-        padding: 32px;
+        flex: 1;
+        padding: 40px 24px;
+        text-align: center;
+    }
+
+    .logo {
+        justify-content: center;
+        margin-bottom: 32px;
     }
 
     .login-form-container {
-        padding: 32px;
+        padding: 40px 24px;
+    }
+
+    .role-selector {
+        grid-template-columns: 1fr;
+    }
+
+    .navbar-right {
+        gap: 8px;
+    }
+
+    .live-badge-top {
+        display: none;
+    }
+
+    .breadcrumb {
+        font-size: 12px;
+    }
+
+    .data-table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .table-header-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .search-input-wrapper {
+        width: 100%;
+    }
+
+    .modal-container {
+        width: 95%;
+        margin: 10px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-brand {
+        display: none; /* Hide brand side on very small screens to focus on login */
+    }
+
+    .login-form-container {
+        padding: 32px 16px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .btn-primary {
+        width: 100%;
+    }
+
+    .stat-value {
+        font-size: 24px;
     }
 }

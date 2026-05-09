@@ -13,6 +13,11 @@ const TopNavbar = ({ user, onLogout, activePage = 'departments', theme, toggleTh
     return (
         <div className={styles.navbar}>
             <div className={styles.left}>
+                <button className={styles.menuToggle} onClick={onToggleSidebar} aria-label="Toggle Menu">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
                 <div className={styles.breadcrumb}>
                     <span className={styles.rolePart}>{roleTitle}</span>
                     <span className={styles.separator}>&gt;</span>

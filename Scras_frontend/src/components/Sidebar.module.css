@@ -183,3 +183,41 @@
     background: rgba(239, 68, 68, 0.1);
     color: #ef4444;
 }
+
+.sidebarOpen {
+    transform: translateX(0) !important;
+}
+
+.closeBtn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    color: var(--text-muted);
+}
+
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+        z-index: 1000;
+        box-shadow: 20px 0 50px rgba(0, 0, 0, 0.1);
+    }
+
+    .closeBtn {
+        display: flex;
+        margin-left: auto;
+    }
+    
+    .header {
+        display: flex;
+        align-items: center;
+        padding: 24px;
+    }
+    
+    .logoWrapper {
+        margin-bottom: 0;
+    }
+}
+

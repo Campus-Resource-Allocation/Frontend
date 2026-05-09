@@ -84,10 +84,10 @@
 }
 
 .liveText {
-    fontSize: 11px;
-    fontWeight: 800;
+    font-size: 11px;
+    font-weight: 800;
     color: #16a34a;
-    letterSpacing: 0.05em;
+    letter-spacing: 0.05em;
 }
 
 .iconBtn {
@@ -144,7 +144,58 @@
 }
 
 @keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.menuToggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    margin-right: 8px;
+}
+
+.menuToggle:hover {
+    background: var(--bg-page);
+    color: var(--admin-accent);
+}
+
+@media (max-width: 1024px) {
+    .menuToggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .navbar {
+        padding: 0 16px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .profileRole,
+    .liveBadge {
+        display: none;
+    }
+
+    .profileBtn {
+        padding: 4px;
+        background: none;
+        border: none;
+    }
 }

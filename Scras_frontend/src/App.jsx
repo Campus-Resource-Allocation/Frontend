@@ -120,6 +120,12 @@ const ProtectedRoute = ({ allowedRole, theme, toggleTheme }) => {
         }
     };
 
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
+
     if (!isAuthenticated()) {
         return null;
     }
@@ -132,17 +138,20 @@ const ProtectedRoute = ({ allowedRole, theme, toggleTheme }) => {
     }
 
     return (
-        <div className="app">
+        <div className={`app ${isSidebarOpen ? 'sidebar-open' : ''}`}>
             <Sidebar 
                 userRole={userRole}
                 activePage={activePage}
                 onPageChange={(page) => {
                     setActivePage(page);
                     navigate(`/${userRole}/${page}`);
+                    setIsSidebarOpen(false); // Close sidebar on page change for mobile
                 }}
                 onLogout={handleLogout}
                 theme={theme}
                 toggleTheme={toggleTheme}
+                isOpen={isSidebarOpen}
+                onToggle={toggleSidebar}
             />
             <div className="main-content">
                 <TopNavbar 
@@ -151,6 +160,7 @@ const ProtectedRoute = ({ allowedRole, theme, toggleTheme }) => {
                     activePage={activePage}
                     theme={theme}
                     toggleTheme={toggleTheme}
+                    onToggleSidebar={toggleSidebar}
                 />
                 <div className="page-content">
                     <Routes>

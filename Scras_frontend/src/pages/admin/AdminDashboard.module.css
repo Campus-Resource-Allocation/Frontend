@@ -105,3 +105,41 @@
     border-color: var(--admin-accent);
     transform: translateY(-2px);
 }
+
+@media (max-width: 768px) {
+    .dashboardHeader h1 {
+        font-size: 24px;
+    }
+    
+    .statsGrid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+    }
+    
+    .statCard {
+        padding: 16px;
+        gap: 12px;
+    }
+    
+    .statIcon {
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+    }
+    
+    .statInfo h3 {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 480px) {
+    .actionButtons {
+        flex-direction: column;
+    }
+    
+    .actionBtn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
