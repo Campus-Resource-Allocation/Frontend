@@ -137,9 +137,26 @@ export const getTimeSlots = async () => {
     }
 };
 
+export const cancelBooking = async (bookingId) => {
+    try {
+        const response = await api.delete(`/ta/cancel-booking/${bookingId}`);
+        return {
+            success: true,
+            data: response.data
+        };
+    } catch (error) {
+        console.error('❌ TA Service - Cancel booking error:', error);
+        return {
+            success: false,
+            message: error.response?.data?.error || 'Failed to cancel booking'
+        };
+    }
+};
+
 export default {
     searchAvailableRooms,
     bookRoom,
     getMyBookings,
-    getTimeSlots
+    getTimeSlots,
+    cancelBooking
 };

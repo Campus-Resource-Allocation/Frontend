@@ -75,6 +75,11 @@
     font-weight: 600;
 }
 
+.select option {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+}
+
 .browseBtn {
     padding: 12px 24px;
     border-radius: 12px;
@@ -100,13 +105,20 @@
     font-weight: 700;
     border: none;
     cursor: pointer;
-    height: 44px;
+    height: 48px; /* Slightly taller for better touch target */
     transition: all 0.2s;
+    box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.2);
 }
 
-.searchBtn:hover {
+.searchBtn:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3);
+    background: #6d28d9;
+}
+
+.searchBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .slotsGrid {

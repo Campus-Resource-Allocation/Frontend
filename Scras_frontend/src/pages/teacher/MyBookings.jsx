@@ -44,31 +44,29 @@ export default function MyBookings({ onPageChange }) {
 
     const loadBookings = async () => {
         setLoading(true);
-        console.log("🚀 Loading bookings...");
-        console.log("📝 Current User:", user);
-        console.log("🔧 Selected Service:", service === taService ? 'TA Service' : 'Teacher Service');
-        
         const data = await service.getMyBookings();
-        
-        console.log("📬 Service Response:", data);
-        console.log("✅ Success:", data?.success);
-        console.log("📋 Data:", data?.data);
-        console.log("🔢 Bookings Count:", data?.data?.length || 0);
-        
         setLoading(false);
         
         if (data?.success) {
-            const bookingsData = data.data || [];
-            setBookings(bookingsData);
-            console.log("✨ Bookings Set Successfully:", bookingsData);
-            console.log("📊 Total bookings in state:", bookingsData.length);
+            setBookings(data.data || []);
         } else {
             setBookings([]);
-            console.log("⚠️ No bookings or error:", data?.message);
             setMessage({ 
                 text: data?.message || "Could not load bookings", 
                 type: "error" 
             });
+        }
+    };
+
+    const handleCancel = async (bookingId) => {
+        if (!window.confirm("Are you sure you want to cancel this booking?")) return;
+        
+        const res = await service.cancelBooking(bookingId);
+        if (res.success) {
+            setMessage({ text: "Booking cancelled successfully", type: "success" });
+            loadBookings();
+        } else {
+            setMessage({ text: res.message || "Failed to cancel booking", type: "error" });
         }
     };
 
@@ -152,8 +150,8 @@ export default function MyBookings({ onPageChange }) {
                             <table style={{ width: "100%", borderCollapse: "collapse" }}>
                                 <thead className={styles.tableHeader}>
                                     <tr>
-                                        {["ROOM", "DATE & TIME", "PURPOSE", "STATUS"].map((col) => (
-                                            <th key={col}>{col}</th>
+                                        {["ROOM", "DATE & TIME", "PURPOSE", "STATUS", "ACTIONS"].map((col) => (
+                                            <th key={col} style={{ textAlign: col === 'ACTIONS' ? 'right' : 'left' }}>{col}</th>
                                         ))}
                                     </tr>
                                 </thead>
@@ -197,6 +195,17 @@ export default function MyBookings({ onPageChange }) {
                                                         <span className={styles.statusDot} style={{ background: sc.dot }} />
                                                         {sc.label}
                                                     </span>
+                                                </td>
+                                                <td style={{ padding: "20px 24px", textAlign: "right" }}>
+                                                    {(booking.status === 'Pending' || booking.status === 'Confirmed' || booking.status === 'Approved') && (
+                                                        <button 
+                                                            onClick={() => handleCancel(booking.booking_id)}
+                                                            className={styles.cancelBtn}
+                                                            title="Cancel this booking"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         );
